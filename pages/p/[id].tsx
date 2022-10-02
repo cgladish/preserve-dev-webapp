@@ -1,8 +1,5 @@
 import Layout from "../../components/layout";
-import utilStyles from "../../styles/utils.module.css";
 import { GetStaticPaths, GetStaticProps } from "next";
-import axios from "axios";
-import path from "path";
 
 type Message = {
   id: string;
@@ -42,12 +39,13 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const response = await axios.get<Snippet>(
-    `${process.env.API_URL}/snippets/${params.id as string}`
+  const response = await fetch(
+    `http://localhost:3000/api/v1/snippets/${params.id as string}`
   );
+  const snippet = await response.json();
   return {
     props: {
-      snippet: response.data,
+      snippet,
     },
   };
 };

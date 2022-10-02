@@ -20,11 +20,7 @@ const Error: NextPage<Props> = ({ statusCode }) => {
       }}
     >
       {statusCode && <h1 style={{ marginBottom: 20 }}>{statusCode}</h1>}
-      <p>
-        {statusCode === 404
-          ? "Content not found"
-          : "An error occured. Please try again later"}
-      </p>
+      <p>An error occured. Please try again later</p>
     </div>
   );
 };

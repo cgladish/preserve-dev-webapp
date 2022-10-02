@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 462.16 94.39">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #bcbec0;
+        letter-spacing: 0em;
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-3 {
+        fill: #f1f2f2;
+      }
+
+      .cls-4 {
+        fill: #8b63aa;
+      }
+
+      .cls-5 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-5, .cls-6 {
+        fill: #fff;
+      }
+
+      .cls-7 {
+        font-family: Avenir-Black, Avenir;
+        font-size: 72px;
+      }
+
+      .cls-6 {
+        letter-spacing: 0em;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="8.79" y1="23.35" x2="58.46" y2="73.02" gradientUnits="userSpaceOnUse">
+      <stop offset=".49" stop-color="#532c86"/>
+      <stop offset=".5" stop-color="#8b63aa"/>
+    </linearGradient>
+  </defs>
+  <path class="cls-2" d="M30.02,14.55h37.24V51.78c0,16.57-13.46,30.03-30.03,30.03H0V44.58C0,28.01,13.45,14.55,30.02,14.55Z"/>
+  <text class="cls-7" transform="translate(14.11 61.49)"><tspan class="cls-3" x="0" y="0">p</tspan><tspan class="cls-5" x="45.36" y="0">r</tspan><tspan class="cls-6" x="73.37" y="0">eserve</tspan><tspan class="cls-4" x="300.02" y="0">.</tspan><tspan class="cls-1" x="321.33" y="0">dev</tspan></text>
+</svg>

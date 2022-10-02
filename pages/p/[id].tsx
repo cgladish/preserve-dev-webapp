@@ -25,6 +25,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
   return (
     <Layout
       title={snippet.title ? `${snippet.title} - Preserve.dev` : "Preserve.dev"}
+      withHeader
     >
       howdy
     </Layout>

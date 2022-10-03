@@ -1,14 +1,14 @@
 import { Button } from "@mui/material";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect } from "react";
+import { useUser } from "@auth0/nextjs-auth0";
 
 export default function Header() {
-  const { data: session } = useSession();
   useEffect(() => {
     (async () => {
-      const res = await fetch(`/api/v1/ping`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ping`);
     })();
   });
+  const { user, error, isLoading } = useUser();
   return (
     <div
       style={{
@@ -23,18 +23,18 @@ export default function Header() {
       <a href="/">
         <img src="/logo-darkmode.svg" height={45} alt="App Logo" />
       </a>
-      {session ? (
+      {user ? (
         <div>
-          {session.user.email}
-          <Button variant="contained" onClick={() => signOut()}>
-            Sign out
-          </Button>
+          {user.email}
+          <a href="/api/auth/logout">
+            <Button variant="contained">Sign out</Button>
+          </a>
         </div>
       ) : (
         <div>
-          <Button variant="contained" onClick={() => signIn()}>
-            Sign in
-          </Button>
+          <a href="/api/auth/login">
+            <Button variant="contained">Sign in</Button>
+          </a>
         </div>
       )}
     </div>

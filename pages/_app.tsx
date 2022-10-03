@@ -1,10 +1,9 @@
-import { SessionProvider } from "next-auth/react";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
-import type { Session } from "next-auth";
 import "./_app.css";
 import { AppProps } from "next/app";
 import createCache from "@emotion/cache";
 import { CacheProvider, EmotionCache } from "@emotion/react";
+import { UserProvider } from "@auth0/nextjs-auth0";
 
 const theme = createTheme({
   palette: {
@@ -39,22 +38,22 @@ const theme = createTheme({
   },
 });
 
-export type Props = AppProps<{ session: Session }> & {
+export type Props = AppProps & {
   emotionCache: EmotionCache;
 };
 export default function App({
   Component,
   emotionCache = createCache({ key: "css", prepend: true }),
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
 }: Props) {
   return (
-    <SessionProvider session={session}>
+    <UserProvider>
       <CacheProvider value={emotionCache}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Component {...pageProps} />
         </ThemeProvider>
       </CacheProvider>
-    </SessionProvider>
+    </UserProvider>
   );
 }

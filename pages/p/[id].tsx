@@ -27,7 +27,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
       title={snippet.title ? `${snippet.title} - Preserve.dev` : "Preserve.dev"}
       withHeader
     >
-      howdy
+      {snippet.title}
     </Layout>
   );
 }
@@ -40,7 +40,9 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const response = await fetch(`/api/v1/snippets/${params.id as string}`);
+  const response = await fetch(
+    `${process.env.APP_URL}/api/v1/snippets/${params.id as string}`
+  );
   const snippet = await response.json();
   return {
     props: {

@@ -5,7 +5,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 export default function Header() {
   useEffect(() => {
     (async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ping`);
+      const res = await fetch(`/api/v1/ping`);
     })();
   });
   const { user, error, isLoading } = useUser();

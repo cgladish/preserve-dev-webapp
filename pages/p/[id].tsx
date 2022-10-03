@@ -40,9 +40,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/snippets/${params.id as string}`
-  );
+  const response = await fetch(`/api/v1/snippets/${params.id as string}`);
   const snippet = await response.json();
   return {
     props: {

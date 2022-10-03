@@ -9,7 +9,10 @@ export type User = {
 };
 export const UserContext = createContext<{
   user?: User;
-}>({});
+  refetchUser: () => Promise<void>;
+}>({
+  refetchUser: () => Promise.resolve(),
+});
 
 export default function UserProvider({
   children,
@@ -19,29 +22,32 @@ export default function UserProvider({
   const { push } = useRouter();
   const { user: auth0User } = useUser();
   const [user, setUser] = useState<User | undefined>(undefined);
+  const fetchUser = async () => {
+    try {
+      const response = await fetch("/api/v1/users/me");
+      if (response.ok) {
+        const fetchedUser = await response.json();
+        return setUser(fetchedUser);
+      }
+      if (response.status !== 401) {
+        throw new Error(response.statusText);
+      }
+      // User hasn't been created yet
+      push("/signup");
+    } catch (err) {
+      console.error("Unable to fetch user");
+    }
+  };
   useEffect(() => {
     if (!auth0User) {
       return;
     }
-    (async () => {
-      try {
-        const response = await fetch("/api/v1/users/me");
-        if (response.ok) {
-          const fetchedUser = await response.json();
-          return setUser(fetchedUser);
-        }
-        if (response.status !== 401) {
-          throw new Error(response.statusText);
-        }
-        // User hasn't been created yet
-        push("/signup");
-      } catch (err) {
-        console.error("Unable to fetch user");
-      }
-    })();
+    fetchUser();
   }, [auth0User]);
 
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, refetchUser: fetchUser }}>
+      {children}
+    </UserContext.Provider>
   );
 }

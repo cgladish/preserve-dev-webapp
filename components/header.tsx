@@ -2,7 +2,6 @@ import { Button, Menu, MenuItem, Typography } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "../components/userProvider";
-import { useRouter } from "next/router";
 
 export default function Header() {
   const { user } = useContext(UserContext);

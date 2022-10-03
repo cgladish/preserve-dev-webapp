@@ -1,11 +1,11 @@
 import {
-  Button,
   Card,
   CircularProgress,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { Check, Error as ErrorIcon } from "@mui/icons-material";
 import { debounce } from "lodash";
 import {
@@ -16,12 +16,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { UserContext } from "@auth0/nextjs-auth0";
+import { UserContext } from "../components/userProvider";
 import { useRouter } from "next/router";
 
 export default function Signup() {
   const { push } = useRouter();
-  const { user } = useContext(UserContext);
+  const { user, refetchUser } = useContext(UserContext);
   useEffect(() => {
     if (user) {
       push("/");
@@ -110,10 +110,12 @@ export default function Signup() {
     !hasCheckedUserNameTaken ||
     !isUserNameAvailable;
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>();
   const onSubmit = async () => {
     if (isConfirmDisabled) {
       return;
     }
+    setIsSubmitting(true);
     try {
       const response = await fetch(`/api/v1/users`, {
         method: "post",
@@ -122,6 +124,7 @@ export default function Signup() {
       if (response.status !== 201) {
         throw new Error(response.statusText);
       }
+      refetchUser();
     } catch (err) {
       console.error("Could not create user");
     }
@@ -179,15 +182,16 @@ export default function Signup() {
             autoFocus
             required
           />
-          <Button
+          <LoadingButton
             type="submit"
             variant="contained"
             style={{ width: "100%", marginTop: 30 }}
             size="large"
-            disabled={isConfirmDisabled}
+            disabled={isConfirmDisabled || isSubmitting}
+            loading={isSubmitting}
           >
             Complete Signup
-          </Button>
+          </LoadingButton>
         </form>
       </Card>
     </div>

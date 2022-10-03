@@ -41,7 +41,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const response = await fetch(
-    `http://localhost:3000/api/v1/snippets/${params.id as string}`
+    `${process.env.NEXT_PUBLIC_API_URL}/snippets/${params.id as string}`
   );
   const snippet = await response.json();
   return {

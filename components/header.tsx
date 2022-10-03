@@ -1,8 +1,14 @@
 import { Button } from "@mui/material";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useEffect } from "react";
 
 export default function Header() {
   const { data: session } = useSession();
+  useEffect(() => {
+    (async () => {
+      const res = await fetch(`/api/v1/ping`);
+    })();
+  });
   return (
     <div
       style={{
@@ -14,7 +20,7 @@ export default function Header() {
         justifyContent: "space-between",
       }}
     >
-      <a href="./">
+      <a href="/">
         <img src="/logo-darkmode.svg" height={45} alt="App Logo" />
       </a>
       {session ? (

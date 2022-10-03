@@ -15,7 +15,7 @@ export default async function handler(
       )}`,
       method: req.method,
       headers: {
-        authorization: `Bearer ${token}`,
+        authorization: token ? `Bearer ${token}` : undefined,
         "Content-Type": "application/json",
       },
       params: omit(req.query, "slug"),

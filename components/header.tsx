@@ -1,14 +1,13 @@
-import { Button } from "@mui/material";
-import { useEffect } from "react";
-import { useUser } from "@auth0/nextjs-auth0";
+import { Button, Menu, MenuItem, Typography } from "@mui/material";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import { useContext, useRef, useState } from "react";
+import { UserContext } from "../components/userProvider";
+import { useRouter } from "next/router";
 
 export default function Header() {
-  useEffect(() => {
-    (async () => {
-      const res = await fetch(`/api/v1/ping`);
-    })();
-  });
-  const { user, error, isLoading } = useUser();
+  const { user } = useContext(UserContext);
+  const menuAnchorRef = useRef<HTMLDivElement>();
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   return (
     <div
       style={{
@@ -24,16 +23,42 @@ export default function Header() {
         <img src="/logo-darkmode.svg" height={45} alt="App Logo" />
       </a>
       {user ? (
-        <div>
-          {user.email}
-          <a href="/api/auth/logout">
-            <Button variant="contained">Sign out</Button>
-          </a>
-        </div>
+        <>
+          <div
+            ref={menuAnchorRef}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginRight: 20,
+              cursor: "pointer",
+            }}
+            onClick={() => setIsMenuOpen(true)}
+          >
+            <Typography>{user.displayName}</Typography>
+            {isMenuOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </div>
+          <Menu
+            anchorEl={menuAnchorRef.current}
+            open={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <a href="/api/auth/logout" style={{ color: "unset" }}>
+              <MenuItem>Sign out</MenuItem>
+            </a>
+          </Menu>
+        </>
       ) : (
         <div>
           <a href="/api/auth/login">
-            <Button variant="contained">Sign in</Button>
+            <Button variant="text">Sign in</Button>
           </a>
         </div>
       )}

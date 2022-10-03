@@ -3,7 +3,8 @@ import "./_app.css";
 import { AppProps } from "next/app";
 import createCache from "@emotion/cache";
 import { CacheProvider, EmotionCache } from "@emotion/react";
-import { UserProvider } from "@auth0/nextjs-auth0";
+import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
+import UserProvider from "../components/userProvider";
 
 const theme = createTheme({
   palette: {
@@ -21,7 +22,7 @@ const theme = createTheme({
       styleOverrides: {
         body: {
           backgroundImage:
-            "radial-gradient(circle at 10% 20%, rgb(20, 20, 20) 0%, rgb(10, 10, 10) 90.2%);",
+            "radial-gradient(circle at 10% 20%, rgb(30, 30, 30) 0%, rgb(10, 10, 10) 90.2%);",
         },
         "&::-webkit-scrollbar": {
           width: 10,
@@ -47,13 +48,15 @@ export default function App({
   pageProps: { ...pageProps },
 }: Props) {
   return (
-    <UserProvider>
-      <CacheProvider value={emotionCache}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </CacheProvider>
-    </UserProvider>
+    <Auth0UserProvider>
+      <UserProvider>
+        <CacheProvider value={emotionCache}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </CacheProvider>
+      </UserProvider>
+    </Auth0UserProvider>
   );
 }

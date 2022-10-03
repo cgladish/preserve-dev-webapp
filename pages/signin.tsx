@@ -21,7 +21,9 @@ export default function Signin({
         height: "100vh",
       }}
     >
-      <img src="/logo-darkmode.svg" height={70} alt="App Logo" />
+      <a href="./">
+        <img src="/logo-darkmode.svg" height={70} alt="App Logo" />
+      </a>
       <Card
         style={{
           marginTop: 20,

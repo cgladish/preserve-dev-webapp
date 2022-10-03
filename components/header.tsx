@@ -14,7 +14,9 @@ export default function Header() {
         justifyContent: "space-between",
       }}
     >
-      <img src="/logo-darkmode.svg" height={45} alt="App Logo" />
+      <a href="./">
+        <img src="/logo-darkmode.svg" height={45} alt="App Logo" />
+      </a>
       {session ? (
         <div>
           {session.user.email}

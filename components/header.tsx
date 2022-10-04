@@ -5,17 +5,18 @@ import { UserContext } from "../components/userProvider";
 
 export default function Header() {
   const { user, isLoading } = useContext(UserContext);
-  const menuAnchorRef = useRef<HTMLDivElement>();
+  const menuAnchorRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
-        height: 60,
+        height: 70,
         paddingLeft: 20,
         paddingRight: 20,
         justifyContent: "space-between",
+        background: "#222",
       }}
     >
       <a href="/">

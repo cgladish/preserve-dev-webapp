@@ -62,6 +62,12 @@ type DiscordAppSpecificData = {
   }[];
 };
 
+type User = {
+  id: string;
+  username: string;
+  displayName: string;
+  createdAt: Date;
+};
 type App = { id: string; name: string };
 type Message = {
   id: string;
@@ -78,7 +84,7 @@ type Snippet = {
   title: string | null;
   appSpecificDataJson: string | null;
   views: number;
-  creatorId: string;
+  creator: User | null;
   app: App;
   messages: Message[];
   createdAt: string;
@@ -326,6 +332,33 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
         <Typography variant="h5" style={{ paddingBottom: 10, fontWeight: 600 }}>
           {snippet.title}
         </Typography>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            marginBottom: 20,
+          }}
+        >
+          <Typography fontSize={14}>
+            Uploaded by @{snippet.creator?.username}
+          </Typography>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              color: "#aaa",
+              width: "100%",
+            }}
+          >
+            <Typography fontSize={12}>{snippet.views} Views</Typography>
+            <Typography fontSize={12} style={{ marginLeft: 5, marginRight: 5 }}>
+              •
+            </Typography>
+            <Typography fontSize={12}>
+              Posted {timeAgo.format(new Date(snippet.createdAt))}
+            </Typography>
+          </div>
+        </div>
         <Card
           style={{
             display: "flex",
@@ -353,22 +386,6 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             ))}
           </List>
         </Card>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            color: "#aaa",
-            width: "100%",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Visibility style={{ width: 20, height: 20, marginRight: 5 }} />
-            <Typography fontSize={14}>{snippet.views} Views</Typography>
-          </div>
-          <Typography fontSize={14}>
-            Posted {timeAgo.format(new Date(snippet.createdAt))}
-          </Typography>
-        </div>
       </div>
     </Layout>
   );

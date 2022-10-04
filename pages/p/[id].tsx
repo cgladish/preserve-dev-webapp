@@ -1,20 +1,12 @@
 import Layout from "../../components/layout";
 import { GetStaticPaths, GetStaticProps } from "next";
-import {
-  Typography,
-  List,
-  LinearProgress,
-  Avatar,
-  IconButton,
-  ListItem,
-  Modal,
-  Card,
-} from "@mui/material";
+import { Typography, List, Avatar, ListItem, Modal, Card } from "@mui/material";
 import { format } from "date-fns";
 import { partition } from "lodash";
-import { Attachment, Download } from "@mui/icons-material";
+import { Attachment, Download, Visibility } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 import filesize from "filesize";
+import { timeAgo } from "../../utils";
 
 type DiscordAppSpecificData = {
   attachments?: {
@@ -89,6 +81,7 @@ type Snippet = {
   creatorId: string;
   app: App;
   messages: Message[];
+  createdAt: string;
 };
 
 const DiscordAttachmentsAndEmbeds = ({
@@ -325,8 +318,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
         style={{
           display: "flex",
           flexDirection: "column",
-          paddingLeft: 100,
+          marginLeft: 100,
           marginTop: 30,
+          width: 850,
         }}
       >
         <Typography variant="h5" style={{ paddingBottom: 10, fontWeight: 600 }}>
@@ -338,7 +332,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             wordWrap: "break-word",
             flexDirection: "column",
             justifyContent: "flex-end",
-            maxWidth: 850,
+            width: "100%",
             minWidth: 850,
             height: 500,
             position: "relative",
@@ -359,6 +353,22 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             ))}
           </List>
         </Card>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            color: "#aaa",
+            width: "100%",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Visibility style={{ width: 20, height: 20, marginRight: 5 }} />
+            <Typography fontSize={14}>{snippet.views} Views</Typography>
+          </div>
+          <Typography fontSize={14}>
+            Posted {timeAgo.format(new Date(snippet.createdAt))}
+          </Typography>
+        </div>
       </div>
     </Layout>
   );

@@ -30,7 +30,7 @@ export default function Signup() {
 
   const inputRef = useRef<HTMLInputElement>();
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current?.focus();
   }, []);
 
   const [userName, setUserName] = useState<string>("");

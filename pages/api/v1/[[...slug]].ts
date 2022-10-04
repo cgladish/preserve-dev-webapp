@@ -7,7 +7,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  let accessToken: string | null;
+  let accessToken: string | undefined;
   try {
     const tokenResult = await getAccessToken(req, res);
     accessToken = tokenResult.accessToken;

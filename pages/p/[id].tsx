@@ -1,6 +1,14 @@
 import Layout from "../../components/layout";
 import { GetStaticPaths, GetStaticProps } from "next";
-import { Typography, List, Avatar, ListItem, Modal, Card } from "@mui/material";
+import {
+  Typography,
+  List,
+  Avatar,
+  ListItem,
+  Modal,
+  Card,
+  Skeleton,
+} from "@mui/material";
 import { format } from "date-fns";
 import { partition } from "lodash";
 import { Attachment, Download, Visibility } from "@mui/icons-material";
@@ -86,6 +94,13 @@ type Snippet = {
   views: number;
   creator: User | null;
   app: App;
+  messages: Message[];
+  createdAt: string;
+};
+type SnippetInteraction = {
+  id: string;
+  snippetId: string;
+  views: number;
   messages: Message[];
   createdAt: string;
 };
@@ -311,10 +326,22 @@ const MessageItem = ({ message }: { message: Message }) => {
 };
 
 export default function Preservette({ snippet }: { snippet: Snippet }) {
+  const [interaction, setInteraction] = useState<SnippetInteraction | null>(
+    null
+  );
+
   const messagesRef = useRef<HTMLUListElement>(null);
   useEffect(() => {
     messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
+    (async () => {
+      const interactionUrl = `/api/v1/snippets/${snippet.id}/interaction`;
+      const response = await fetch(interactionUrl);
+      const fetchedInteraction = await response.json();
+      setInteraction(fetchedInteraction);
+      await fetch(interactionUrl, { method: "post" }); // Update view count
+    })();
   }, []);
+
   return (
     <Layout
       title={snippet.title ? `${snippet.title} - Preserve.dev` : "Preserve.dev"}
@@ -348,15 +375,25 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
               alignItems: "center",
               color: "#aaa",
               width: "100%",
+              height: 30,
             }}
           >
-            <Typography fontSize={12}>{snippet.views} Views</Typography>
-            <Typography fontSize={12} style={{ marginLeft: 5, marginRight: 5 }}>
-              •
-            </Typography>
-            <Typography fontSize={12}>
-              Posted {timeAgo.format(new Date(snippet.createdAt))}
-            </Typography>
+            {interaction ? (
+              <>
+                <Typography fontSize={12}>{interaction.views} Views</Typography>
+                <Typography
+                  fontSize={12}
+                  style={{ marginLeft: 5, marginRight: 5 }}
+                >
+                  •
+                </Typography>
+                <Typography fontSize={12}>
+                  Posted {timeAgo.format(new Date(snippet.createdAt))}
+                </Typography>
+              </>
+            ) : (
+              <Skeleton style={{ width: 150 }} />
+            )}
           </div>
         </div>
         <Card
@@ -402,6 +439,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const response = await fetch(
     `${process.env.APP_URL}/api/v1/snippets/${params?.id as string}`
   );
+  if (response.status === 404) {
+    return { notFound: true };
+  } else if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
   const snippet = await response.json();
   return {
     props: {

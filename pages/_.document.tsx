@@ -21,7 +21,7 @@ export default class MyDocument extends Document<{
             async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7658970265006187"
             crossOrigin="anonymous"
-          ></script>
+          />
         </Head>
         <body>
           <Main />

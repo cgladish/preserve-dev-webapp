@@ -633,7 +633,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             There is nothing to see here.
           </Typography>
         )}
-        <List ref={messagesRef} dense>
+        <List dense>
           {[...savedComments, ...commentsFilterSavedComments].map((comment) => (
             <ListItem
               key={comment.id}

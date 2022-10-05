@@ -556,7 +556,13 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             ))}
           </List>
         </Card>
-        <Card style={{ width: "100%", marginTop: 40 }}>
+        <form
+          style={{ marginTop: 150, background: "#222", borderRadius: 4 }}
+          onSubmit={(event) => {
+            event.preventDefault();
+            onCommentSubmit();
+          }}
+        >
           <TextField
             style={{ width: "100%" }}
             InputProps={{ style: { paddingTop: 10 } }}
@@ -568,11 +574,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             value={commentText}
             onChange={(event) => setCommentText(event.target.value)}
           />
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              onCommentSubmit();
-            }}
+          <div
             style={{
               display: "flex",
               width: "100%",
@@ -609,8 +611,8 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             >
               Save
             </LoadingButton>
-          </form>
-        </Card>
+          </div>
+        </form>
         <div style={{ height: 35, marginTop: 40 }}>
           {comments ? (
             <Typography

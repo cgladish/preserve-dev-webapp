@@ -2,8 +2,10 @@ import { Button, Menu, MenuItem, Typography } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "../components/userProvider";
+import { useTheme } from "@mui/material";
 
 export default function Header() {
+  const theme = useTheme();
   const { user, isLoading } = useContext(UserContext);
   const menuAnchorRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -12,10 +14,16 @@ export default function Header() {
       style={{
         display: "flex",
         alignItems: "center",
-        paddingTop: 30,
+        height: 70,
         paddingLeft: 30,
         paddingRight: 20,
         justifyContent: "space-between",
+        position: "sticky",
+        top: 0,
+        background: "rgba(20, 20, 20, 0.8)",
+        backdropFilter: "blur(5px)",
+        zIndex: 1000,
+        borderBottom: "1px solid #333",
       }}
     >
       <a href="/">

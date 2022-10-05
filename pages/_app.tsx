@@ -21,8 +21,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundImage:
-            "radial-gradient(circle at 10% 20%, rgb(20, 20, 20) 0%, rgb(10, 10, 10) 90.2%);",
+          background: "rgba(20, 20, 20, 1.0)",
         },
         "&::-webkit-scrollbar": {
           width: 10,

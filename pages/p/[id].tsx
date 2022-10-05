@@ -8,13 +8,18 @@ import {
   Modal,
   Card,
   Skeleton,
+  TextField,
+  IconButton,
+  Button,
 } from "@mui/material";
 import { format } from "date-fns";
 import { partition } from "lodash";
-import { Attachment, Download, Visibility } from "@mui/icons-material";
+import { Attachment, Download, Send } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 import filesize from "filesize";
 import { timeAgo } from "../../utils";
+import { LoadingButton } from "@mui/lab";
+import { useIsInViewport } from "../../hooks/useIsInViewport";
 
 type DiscordAppSpecificData = {
   attachments?: {
@@ -103,6 +108,18 @@ type SnippetInteraction = {
   views: number;
   messages: Message[];
   createdAt: string;
+};
+type Comment = {
+  id: string;
+  content: string;
+  creator: User;
+  createdAt: Date;
+  updatedAt: Date;
+};
+type CommentsPaginationInfo = {
+  data: Comment[];
+  totalCount: number;
+  isLastPage: boolean;
 };
 
 const DiscordAttachmentsAndEmbeds = ({
@@ -285,6 +302,7 @@ const MessageItem = ({ message }: { message: Message }) => {
         position: "relative",
         display: "flex",
         flexDirection: "column",
+        borderTop: "1px solid #666",
       }}
       disablePadding
     >
@@ -325,6 +343,7 @@ const MessageItem = ({ message }: { message: Message }) => {
   );
 };
 
+const MAX_COMMENT_LENGTH = 2000;
 export default function Preservette({ snippet }: { snippet: Snippet }) {
   const [interaction, setInteraction] = useState<SnippetInteraction | null>(
     null
@@ -338,9 +357,67 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
       const response = await fetch(interactionUrl);
       const fetchedInteraction = await response.json();
       setInteraction(fetchedInteraction);
-      await fetch(interactionUrl, { method: "post" }); // Update view count
+      await fetch(`${interactionUrl}/views`, { method: "post" }); // Update view count
     })();
   }, []);
+
+  const commentsBottomRef = useRef<HTMLDivElement>(null);
+  const [isFetchingComments, setIsFetchingComments] = useState<boolean>();
+  const [comments, setComments] = useState<CommentsPaginationInfo | null>(null);
+  const isCommentsBottomRefInViewport = useIsInViewport(commentsBottomRef);
+  useEffect(() => {
+    (async () => {
+      if (
+        !comments ||
+        (isCommentsBottomRefInViewport &&
+          !isFetchingComments &&
+          !comments?.isLastPage)
+      ) {
+        setIsFetchingComments(true);
+        try {
+          const response = await fetch(
+            `/api/v1/snippets/${snippet.id}/comments`
+          );
+          if (response.status !== 200) {
+            throw new Error(response.statusText);
+          }
+          const fetchedComments: CommentsPaginationInfo = await response.json();
+          setComments({
+            data: [...(comments?.data ?? []), ...fetchedComments.data],
+            totalCount: fetchedComments.totalCount,
+            isLastPage: fetchedComments.isLastPage,
+          });
+        } catch (err) {
+          console.error(err);
+        }
+        setIsFetchingComments(false);
+      }
+    })();
+  }, [isCommentsBottomRefInViewport]);
+
+  const [commentText, setCommentText] = useState<string>("");
+  const [isSavingComment, setIsSavingComment] = useState<boolean>(false);
+  const isCommentSubmitDisabled =
+    commentText.length < 1 || commentText.length > MAX_COMMENT_LENGTH;
+  const onCommentSubmit = async () => {
+    if (isCommentSubmitDisabled) {
+      return;
+    }
+    setIsSavingComment(true);
+    try {
+      const response = await fetch(`/api/v1/snippets/${snippet.id}/comments`, {
+        method: "post",
+        body: JSON.stringify({ content: commentText }),
+      });
+      if (response.status !== 201) {
+        throw new Error(response.statusText);
+      }
+      setCommentText("");
+    } catch (err) {
+      console.error(err);
+    }
+    setIsSavingComment(false);
+  };
 
   return (
     <Layout
@@ -353,7 +430,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           flexDirection: "column",
           marginLeft: 100,
           marginTop: 30,
-          width: 850,
+          minWidth: 850,
+          maxWidth: 850,
+          wordWrap: "break-word",
         }}
       >
         <Typography variant="h5" style={{ paddingBottom: 10, fontWeight: 600 }}>
@@ -367,7 +446,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           }}
         >
           <Typography fontSize={14}>
-            Uploaded by @{snippet.creator?.username}
+            Uploaded by @{snippet.creator?.displayName}
           </Typography>
           <div
             style={{
@@ -399,7 +478,6 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
         <Card
           style={{
             display: "flex",
-            wordWrap: "break-word",
             flexDirection: "column",
             justifyContent: "flex-end",
             width: "100%",
@@ -423,6 +501,127 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             ))}
           </List>
         </Card>
+        <Card style={{ width: "100%", marginTop: 40 }}>
+          <TextField
+            style={{ width: "100%" }}
+            InputProps={{ style: { paddingTop: 10 } }}
+            placeholder="Add a comment"
+            variant="filled"
+            multiline
+            minRows={3}
+            maxRows={3}
+            value={commentText}
+            onChange={(event) => setCommentText(event.target.value)}
+          />
+          <form
+            onSubmit={() => onCommentSubmit()}
+            style={{
+              display: "flex",
+              width: "100%",
+              height: 50,
+              borderRadius: "0 0 4px 4px",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                width: 70,
+                justifyContent: "end",
+                marginRight: 10,
+              }}
+            >
+              <Typography
+                fontSize={14}
+                color={
+                  commentText.length > MAX_COMMENT_LENGTH ? "error" : undefined
+                }
+              >
+                {commentText.length}/{MAX_COMMENT_LENGTH}
+              </Typography>
+            </div>
+            <LoadingButton
+              disabled={isCommentSubmitDisabled}
+              loading={isSavingComment}
+              type="submit"
+              variant="contained"
+              size="small"
+              style={{ marginRight: 10 }}
+            >
+              Save
+            </LoadingButton>
+          </form>
+        </Card>
+        <div style={{ height: 35, marginTop: 40 }}>
+          {comments ? (
+            <Typography
+              variant="h6"
+              fontWeight={500}
+              style={{
+                color: "#ccc",
+              }}
+            >
+              {comments.totalCount} Comments
+            </Typography>
+          ) : (
+            <Skeleton height="100%" width={200} />
+          )}
+        </div>
+
+        <List ref={messagesRef} dense>
+          {!comments?.data.length && !isFetchingComments && (
+            <ListItem style={{ borderTop: "1px solid #666" }}>
+              <Typography style={{ borderTop: "1px solid #666" }}>
+                There is nothing to see here.
+              </Typography>
+            </ListItem>
+          )}
+          {comments?.data.map((comment) => (
+            <ListItem
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                borderTop: "1px solid #666",
+                alignItems: "flex-start",
+                padding: "0 0 20px 0",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#aaa",
+                  width: "100%",
+                  height: 30,
+                }}
+              >
+                <Typography fontSize={12}>
+                  @{comment.creator.displayName}
+                </Typography>
+                <Typography
+                  fontSize={12}
+                  style={{ marginLeft: 5, marginRight: 5 }}
+                >
+                  •
+                </Typography>
+                <Typography fontSize={12}>
+                  Posted {timeAgo.format(new Date(comment.createdAt))}
+                </Typography>
+              </div>
+              <Typography
+                style={{
+                  wordWrap: "break-word",
+                  display: "inline-block",
+                  maxWidth: "850px",
+                }}
+              >
+                {comment.content}
+              </Typography>
+            </ListItem>
+          ))}
+        </List>
+        <div ref={commentsBottomRef} />
       </div>
     </Layout>
   );

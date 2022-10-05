@@ -14,7 +14,7 @@ export default function Layout({
   withHeader?: boolean;
 }) {
   return (
-    <div>
+    <div style={{ paddingBottom: 30 }}>
       <Head>
         <title>{title}</title>
       </Head>

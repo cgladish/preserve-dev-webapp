@@ -2,7 +2,7 @@ body {
   margin: 0;
   font-family: "Roboto", sans-serif;
   font-weight: 500;
-  height: 100vh;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

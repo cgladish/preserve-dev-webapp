@@ -1,6 +1,8 @@
 import {
   Card,
+  Checkbox,
   CircularProgress,
+  FormControlLabel,
   InputAdornment,
   TextField,
   Typography,
@@ -34,6 +36,7 @@ export default function Signup() {
   }, []);
 
   const [userName, setUserName] = useState<string>("");
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState<boolean>(false);
 
   const [isValidUserName, setIsValidUserName] = useState<boolean>();
 
@@ -108,7 +111,8 @@ export default function Signup() {
     !isValidUserName ||
     !hasDebouncePassed ||
     !hasCheckedUserNameTaken ||
-    !isUserNameAvailable;
+    !isUserNameAvailable ||
+    !hasAcceptedTerms;
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>();
   const onSubmit = async () => {
@@ -182,10 +186,32 @@ export default function Signup() {
             autoFocus
             required
           />
+          <FormControlLabel
+            style={{ marginTop: 10 }}
+            control={
+              <Checkbox
+                value={hasAcceptedTerms}
+                onChange={(event) => setHasAcceptedTerms(event.target.checked)}
+              />
+            }
+            label={
+              <>
+                I agree to the{" "}
+                <a
+                  href="/terms"
+                  target="_blank"
+                  style={{ color: "#fff", textDecoration: "underline" }}
+                >
+                  Terms and Conditions
+                </a>
+                .
+              </>
+            }
+          />
           <LoadingButton
             type="submit"
             variant="contained"
-            style={{ width: "100%", marginTop: 30 }}
+            style={{ width: "100%", marginTop: 10 }}
             size="large"
             disabled={isConfirmDisabled || isSubmitting}
             loading={isSubmitting}

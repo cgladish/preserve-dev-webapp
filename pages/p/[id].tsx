@@ -15,11 +15,19 @@ import {
 import { format } from "date-fns";
 import { partition } from "lodash";
 import { Attachment, Download, Send } from "@mui/icons-material";
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import filesize from "filesize";
 import { timeAgo } from "../../utils";
 import { LoadingButton } from "@mui/lab";
 import { useIsInViewport } from "../../hooks/useIsInViewport";
+import { UserContext } from "../../components/userProvider";
 
 type DiscordAppSpecificData = {
   attachments?: {
@@ -115,6 +123,7 @@ type Comment = {
   creator: User;
   createdAt: Date;
   updatedAt: Date;
+  savedNow?: boolean;
 };
 type CommentsPaginationInfo = {
   data: Comment[];
@@ -343,11 +352,41 @@ const MessageItem = ({ message }: { message: Message }) => {
   );
 };
 
+const LoadingCommentItem = forwardRef<HTMLLIElement>((_, ref) => (
+  <ListItem
+    ref={ref}
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      borderTop: "1px solid #666",
+      alignItems: "flex-start",
+      padding: "5px 5px 15px 5px",
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        color: "#aaa",
+        width: "100%",
+        height: 30,
+      }}
+    >
+      <Skeleton height="100%" width={70} />
+      <Skeleton style={{ marginLeft: 20 }} height="100%" width={150} />
+    </div>
+    <Skeleton height="40" width="100%" />
+    <Skeleton height="40" width="100%" />
+  </ListItem>
+));
+
 const MAX_COMMENT_LENGTH = 2000;
 export default function Preservette({ snippet }: { snippet: Snippet }) {
   const [interaction, setInteraction] = useState<SnippetInteraction | null>(
     null
   );
+
+  const { user } = useContext(UserContext);
 
   const messagesRef = useRef<HTMLUListElement>(null);
   useEffect(() => {
@@ -361,7 +400,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     })();
   }, []);
 
-  const commentsBottomRef = useRef<HTMLDivElement>(null);
+  const commentsBottomRef = useRef<HTMLLIElement>(null);
   const [isFetchingComments, setIsFetchingComments] = useState<boolean>();
   const [comments, setComments] = useState<CommentsPaginationInfo | null>(null);
   const isCommentsBottomRefInViewport = useIsInViewport(commentsBottomRef);
@@ -376,7 +415,11 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
         setIsFetchingComments(true);
         try {
           const response = await fetch(
-            `/api/v1/snippets/${snippet.id}/comments`
+            `/api/v1/snippets/${snippet.id}/comments${
+              comments
+                ? `?cursor=${comments.data[comments.data.length - 1]?.id}`
+                : ""
+            }`
           );
           if (response.status !== 200) {
             throw new Error(response.statusText);
@@ -384,7 +427,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           const fetchedComments: CommentsPaginationInfo = await response.json();
           setComments({
             data: [...(comments?.data ?? []), ...fetchedComments.data],
-            totalCount: fetchedComments.totalCount,
+            totalCount: comments?.totalCount ?? fetchedComments.totalCount,
             isLastPage: fetchedComments.isLastPage,
           });
         } catch (err) {
@@ -395,6 +438,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     })();
   }, [isCommentsBottomRefInViewport]);
 
+  const [savedComments, setSavedComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState<string>("");
   const [isSavingComment, setIsSavingComment] = useState<boolean>(false);
   const isCommentSubmitDisabled =
@@ -413,11 +457,22 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
         throw new Error(response.statusText);
       }
       setCommentText("");
+      const savedComment = await response.json();
+      setSavedComments([{ ...savedComment, savedNow: true }, ...savedComments]);
     } catch (err) {
       console.error(err);
     }
     setIsSavingComment(false);
   };
+
+  const commentsFilterSavedComments = useMemo(
+    () =>
+      comments?.data.filter(
+        (comment) =>
+          !savedComments.some((savedComment) => comment.id === savedComment.id)
+      ) ?? [],
+    [savedComments, comments]
+  );
 
   return (
     <Layout
@@ -514,7 +569,10 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             onChange={(event) => setCommentText(event.target.value)}
           />
           <form
-            onSubmit={() => onCommentSubmit()}
+            onSubmit={(event) => {
+              event.preventDefault();
+              onCommentSubmit();
+            }}
             style={{
               display: "flex",
               width: "100%",
@@ -562,29 +620,28 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                 color: "#ccc",
               }}
             >
-              {comments.totalCount} Comments
+              {comments.totalCount + savedComments.length} Comments
             </Typography>
           ) : (
             <Skeleton height="100%" width={200} />
           )}
         </div>
-
+        {!comments?.data.length && comments?.isLastPage && (
+          <Typography style={{ borderTop: "1px solid #666", paddingTop: 20 }}>
+            There is nothing to see here.
+          </Typography>
+        )}
         <List ref={messagesRef} dense>
-          {!comments?.data.length && !isFetchingComments && (
-            <ListItem style={{ borderTop: "1px solid #666" }}>
-              <Typography style={{ borderTop: "1px solid #666" }}>
-                There is nothing to see here.
-              </Typography>
-            </ListItem>
-          )}
-          {comments?.data.map((comment) => (
+          {[...savedComments, ...commentsFilterSavedComments].map((comment) => (
             <ListItem
+              key={comment.id}
               style={{
                 display: "flex",
                 flexDirection: "column",
                 borderTop: "1px solid #666",
                 alignItems: "flex-start",
-                padding: "0 0 20px 0",
+                padding: "5px 5px 15px 5px",
+                background: comment.savedNow ? "#222" : "unset",
               }}
             >
               <div
@@ -596,7 +653,12 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                   height: 30,
                 }}
               >
-                <Typography fontSize={12}>
+                <Typography
+                  fontSize={12}
+                  color={
+                    comment.creator.id === user?.id ? "primary" : undefined
+                  }
+                >
                   @{comment.creator.displayName}
                 </Typography>
                 <Typography
@@ -621,7 +683,14 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             </ListItem>
           ))}
         </List>
-        <div ref={commentsBottomRef} />
+        {!comments?.isLastPage && (
+          <>
+            <LoadingCommentItem ref={commentsBottomRef} />
+            <LoadingCommentItem />
+            <LoadingCommentItem />
+            <LoadingCommentItem />
+          </>
+        )}
       </div>
     </Layout>
   );

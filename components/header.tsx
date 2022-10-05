@@ -12,11 +12,10 @@ export default function Header() {
       style={{
         display: "flex",
         alignItems: "center",
-        height: 70,
-        paddingLeft: 20,
+        paddingTop: 30,
+        paddingLeft: 30,
         paddingRight: 20,
         justifyContent: "space-between",
-        background: "#222",
       }}
     >
       <a href="/">

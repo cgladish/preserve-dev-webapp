@@ -238,10 +238,13 @@ export default function MessageItem({
             </Typography>
           </div>
           <Typography
+            className="message-content"
             style={{
               fontSize: `${1.0 * scale}rem`,
               marginTop: `${2 * scale}px`,
               wordWrap: "break-word",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {message.content}

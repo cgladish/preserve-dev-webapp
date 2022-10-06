@@ -50,3 +50,9 @@ code {
     width: 1290px;
   }
 }
+
+.snippet-preview-messages .message-content {
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}

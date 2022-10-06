@@ -12,10 +12,7 @@ const LoadingSnippetPreviewMessage = () => (
     }}
     disablePadding
   >
-    <div
-      style={{ display: "flex", width: "100%" }}
-      style={{ marginBottom: 30 }}
-    >
+    <div style={{ display: "flex", width: "100%" }}>
       <Skeleton variant="circular" width={40} height={40} />
       <div
         style={{
@@ -100,6 +97,7 @@ export const LoadingSnippetPreviewItem = forwardRef<HTMLLIElement>((_, ref) => (
   </Card>
 ));
 
+const MAX_MESSAGE_LENGTH = 100;
 export default function SnippetPreviewItem({
   snippet,
 }: {
@@ -125,7 +123,11 @@ export default function SnippetPreviewItem({
             </Typography>
           </div>
         )}
-        <List style={{ paddingBottom: 10, paddingTop: 0 }} dense>
+        <List
+          className="snippet-preview-messages"
+          style={{ paddingBottom: 10, paddingTop: 0 }}
+          dense
+        >
           {messagesToShow.map((message) => (
             <MessageItem message={message} scale={0.8} />
           ))}
@@ -133,39 +135,54 @@ export default function SnippetPreviewItem({
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#aaa",
+            flexDirection: "column",
             borderTop: "1px solid #666",
             paddingTop: 10,
-            paddingLeft: 20,
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              width: 70,
-              height: 15,
-            }}
-          >
-            <Visibility style={{ width: 15, height: 15, marginRight: 5 }} />
-            <Typography fontSize="0.8rem">
-              {snippet.interaction.views}
+          {snippet.title && (
+            <Typography
+              style={{ marginBottom: 10, marginLeft: 10 }}
+              fontSize="0.85rem"
+            >
+              {snippet.title}
             </Typography>
-          </div>
+          )}
           <div
             style={{
               display: "flex",
               alignItems: "center",
-              width: 70,
-              height: 15,
+              justifyContent: "center",
+              color: "#aaa",
+              paddingLeft: 20,
             }}
           >
-            <Comment
-              style={{ width: 15, height: 15, marginTop: 3, marginRight: 5 }}
-            />
-            <Typography fontSize="0.8rem">{snippet.totalComments}</Typography>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: 70,
+                height: 15,
+              }}
+            >
+              <Visibility style={{ width: 15, height: 15, marginRight: 5 }} />
+              <Typography fontSize="0.8rem">
+                {snippet.interaction.views}
+              </Typography>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                width: 70,
+                height: 15,
+              }}
+            >
+              <Comment
+                style={{ width: 15, height: 15, marginTop: 3, marginRight: 5 }}
+              />
+              <Typography fontSize="0.8rem">{snippet.totalComments}</Typography>
+            </div>
           </div>
         </div>
       </Card>

@@ -31,3 +31,22 @@ code {
     display: block;
   }
 }
+
+#recent-snippets {
+  width: 300px;
+}
+@media screen and (min-width: 900px) {
+  #recent-snippets {
+    width: 630px;
+  }
+}
+@media screen and (min-width: 1200px) {
+  #recent-snippets {
+    width: 960px;
+  }
+}
+@media screen and (min-width: 1536px) {
+  #recent-snippets {
+    width: 1290px;
+  }
+}

@@ -141,7 +141,7 @@ export default function SnippetPreviewItem({
           style={{
             display: "flex",
             flexDirection: "column",
-            borderTop: "1px solid #666",
+            borderTop: "1px solid #A45EE5",
             paddingTop: 10,
           }}
         >

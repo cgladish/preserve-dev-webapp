@@ -10,7 +10,7 @@ import { useIsInViewport } from "../hooks/useIsInViewport";
 import { SnippetPreviewsPaginationInfo } from "../utils/types";
 
 export default function Home() {
-  const snippetsBottomRef = useRef<HTMLLIElement>(null);
+  const snippetsBottomRef = useRef<HTMLDivElement>(null);
   const [isFetchingSnippets, setIsFetchingSnippets] = useState<boolean>();
   const [snippets, setSnippets] =
     useState<SnippetPreviewsPaginationInfo | null>(null);
@@ -168,6 +168,14 @@ export default function Home() {
             {!snippets?.isLastPage && (
               <>
                 <LoadingSnippetPreviewItem ref={snippetsBottomRef} />
+                <LoadingSnippetPreviewItem />
+                <LoadingSnippetPreviewItem />
+                <LoadingSnippetPreviewItem />
+                <LoadingSnippetPreviewItem />
+                <LoadingSnippetPreviewItem />
+                <LoadingSnippetPreviewItem />
+                <LoadingSnippetPreviewItem />
+                <LoadingSnippetPreviewItem />
                 <LoadingSnippetPreviewItem />
                 <LoadingSnippetPreviewItem />
                 <LoadingSnippetPreviewItem />

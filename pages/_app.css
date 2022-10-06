@@ -51,7 +51,7 @@ code {
   }
 }
 
-.snippet-preview-messages .message-content {
+.snippet-preview-item .message-content {
   -webkit-line-clamp: 2;
   display: -webkit-box;
   -webkit-box-orient: vertical;

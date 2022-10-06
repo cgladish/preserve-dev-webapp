@@ -56,7 +56,10 @@ const LoadingSnippetPreviewMessage = () => (
 );
 
 export const LoadingSnippetPreviewItem = forwardRef<HTMLLIElement>((_, ref) => (
-  <Card style={{ width: 300, paddingBottom: 10 }}>
+  <Card
+    className="snippet-preview-item"
+    style={{ width: 300, paddingBottom: 10, marginBottom: 30 }}
+  >
     <List style={{ paddingBottom: 10, paddingTop: 0 }} dense>
       <LoadingSnippetPreviewMessage />
       <LoadingSnippetPreviewMessage />
@@ -108,28 +111,30 @@ export default function SnippetPreviewItem({
   );
   const hiddenMessages = snippet.messages.length - messagesToShow.length;
   return (
-    <a href={`/p/${snippet.id}`} style={{ marginBottom: 30 }}>
+    <a
+      className="snippet-preview-item"
+      href={`/p/${snippet.id}`}
+      style={{ marginBottom: 30 }}
+    >
       <Card style={{ width: 300, paddingBottom: 10 }}>
         {hiddenMessages > 0 && (
           <div
             style={{
               display: "flex",
-              justifyContent: "center",
-              padding: "10px 0",
+              flexDirection: "column",
+              alignItems: "center",
+              paddingBottom: 10,
             }}
           >
+            <MoreHoriz />
             <Typography fontSize="0.8rem">
               {hiddenMessages} more messages
             </Typography>
           </div>
         )}
-        <List
-          className="snippet-preview-messages"
-          style={{ paddingBottom: 10, paddingTop: 0 }}
-          dense
-        >
+        <List style={{ paddingBottom: 10, paddingTop: 0 }} dense>
           {messagesToShow.map((message) => (
-            <MessageItem message={message} scale={0.8} />
+            <MessageItem key={message.id} message={message} scale={0.8} />
           ))}
         </List>
         <div

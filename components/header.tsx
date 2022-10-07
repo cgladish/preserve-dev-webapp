@@ -59,6 +59,9 @@ export default function Header() {
                 horizontal: "right",
               }}
             >
+              <a href={`/u/${user.id}/snippets`} style={{ color: "unset" }}>
+                <MenuItem>Your Snippets</MenuItem>
+              </a>
               <a href="/api/auth/logout" style={{ color: "unset" }}>
                 <MenuItem>Sign out</MenuItem>
               </a>

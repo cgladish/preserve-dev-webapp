@@ -146,7 +146,7 @@ export default function Signup() {
       }}
     >
       <a href="/">
-        <img src="/logo-darkmode.svg" height={65} alt="App Logo" />
+        <img src="/logo-darkmode.png" height={65} alt="App Logo" />
       </a>
       <Card
         style={{

@@ -27,7 +27,7 @@ export default function Header() {
       }}
     >
       <a href="/">
-        <img id="logo" src="/logo-darkmode.svg" height={45} alt="App Logo" />
+        <img id="logo" src="/logo-darkmode.png" height={45} alt="App Logo" />
         <img id="logo-small" src="/favicon.ico" height={45} alt="App Logo" />
       </a>
       {!isLoading &&

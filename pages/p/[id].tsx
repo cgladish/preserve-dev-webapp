@@ -160,6 +160,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     <Layout
       title={snippet.title ? `${snippet.title} - Preserve.dev` : "Preserve.dev"}
       withHeader
+      withAds
     >
       <div
         style={{

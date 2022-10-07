@@ -17,11 +17,6 @@ export default class MyDocument extends Document<{
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
-          <script
-            async
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7658970265006187"
-            crossOrigin="anonymous"
-          />
         </Head>
         <body>
           <Main />

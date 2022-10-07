@@ -8,15 +8,24 @@ export default function Layout({
   children,
   title,
   withHeader,
+  withAds,
 }: {
   children: ReactNode | ReactNode[];
   title: string;
+  withAds?: boolean;
   withHeader?: boolean;
 }) {
   return (
     <div style={{ paddingBottom: 30 }}>
       <Head>
         <title>{title}</title>
+        {withAds && (
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7658970265006187"
+            crossOrigin="anonymous"
+          />
+        )}
       </Head>
       <main>
         {withHeader && <Header />}

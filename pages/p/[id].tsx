@@ -7,6 +7,7 @@ import {
   Card,
   Skeleton,
   TextField,
+  useTheme,
 } from "@mui/material";
 import {
   forwardRef,
@@ -27,6 +28,7 @@ import {
   SnippetInteraction,
 } from "../../utils/types";
 import MessageItem from "../../components/snippetMessageItem";
+import Link from "next/link";
 
 const LoadingCommentItem = forwardRef<HTMLLIElement>((_, ref) => (
   <ListItem
@@ -61,6 +63,10 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
   const [interaction, setInteraction] = useState<SnippetInteraction | null>(
     null
   );
+
+  const {
+    palette: { primary },
+  } = useTheme();
 
   const { user } = useContext(UserContext);
 
@@ -177,7 +183,12 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           }}
         >
           <Typography fontSize={14}>
-            Uploaded by @{snippet.creator?.displayName}
+            Uploaded by{" "}
+            <Link href={`/u/${snippet.creator?.id}/snippets`}>
+              <a style={{ color: "#fff", textDecoration: "underline" }}>
+                @{snippet.creator?.displayName}
+              </a>
+            </Link>
           </Typography>
           <div
             style={{

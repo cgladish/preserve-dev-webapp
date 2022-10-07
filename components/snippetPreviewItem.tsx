@@ -57,49 +57,47 @@ const LoadingSnippetPreviewMessage = () => (
 
 export const LoadingSnippetPreviewItem = forwardRef<HTMLDivElement>(
   (_, ref) => (
-    <Card
-      ref={ref}
-      className="snippet-preview-item"
-      style={{ width: 300, paddingBottom: 10, marginBottom: 30 }}
-    >
-      <List style={{ paddingBottom: 10, paddingTop: 0 }} dense>
-        <LoadingSnippetPreviewMessage />
-        <LoadingSnippetPreviewMessage />
-        <LoadingSnippetPreviewMessage />
-      </List>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#aaa",
-          borderTop: "1px solid #666",
-          paddingTop: 10,
-          paddingLeft: 20,
-        }}
-      >
+    <div className="snippet-preview-item" style={{ marginBottom: 30 }}>
+      <Card ref={ref} style={{ width: 300, paddingBottom: 10 }}>
+        <List style={{ paddingBottom: 10, paddingTop: 0 }} dense>
+          <LoadingSnippetPreviewMessage />
+          <LoadingSnippetPreviewMessage />
+          <LoadingSnippetPreviewMessage />
+        </List>
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            width: 70,
-            height: 20,
+            justifyContent: "center",
+            color: "#aaa",
+            borderTop: "1px solid #666",
+            paddingTop: 10,
+            paddingLeft: 20,
           }}
         >
-          <Skeleton variant="rectangular" height={20} width={50} />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: 70,
+              height: 20,
+            }}
+          >
+            <Skeleton variant="rectangular" height={20} width={50} />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: 70,
+              height: 20,
+            }}
+          >
+            <Skeleton variant="rectangular" height={20} width={50} />
+          </div>
         </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            width: 70,
-            height: 20,
-          }}
-        >
-          <Skeleton variant="rectangular" height={20} width={50} />
-        </div>
-      </div>
-    </Card>
+      </Card>
+    </div>
   )
 );
 

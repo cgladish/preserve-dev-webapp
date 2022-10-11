@@ -101,7 +101,6 @@ export const LoadingSnippetPreviewItem = forwardRef<HTMLDivElement>(
   )
 );
 
-const MAX_MESSAGE_LENGTH = 100;
 export default function SnippetPreviewItem({
   snippet,
 }: {

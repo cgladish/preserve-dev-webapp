@@ -1,57 +1,3 @@
-export type DiscordAppSpecificData = {
-  attachments?: {
-    id: string;
-    filename: string;
-    description?: string;
-    content_type?: string;
-    size: number;
-    url: string;
-    height?: number;
-    width?: number;
-    ephemeral?: boolean;
-  }[];
-  embeds?: {
-    title?: string;
-    type?: string;
-    description?: string;
-    url?: string;
-    timestamp?: string;
-    footer?: {
-      text: string;
-      icon_url?: string;
-    };
-    image?: {
-      url: string;
-      height?: number;
-      width?: number;
-    };
-    thumbnail?: {
-      url: string;
-      height?: number;
-      width?: number;
-    };
-    video?: {
-      url: string;
-      height?: number;
-      width?: number;
-    };
-    provider?: {
-      name?: string;
-      url?: string;
-    };
-    author?: {
-      name: string;
-      url?: string;
-      icon_url?: string;
-    };
-    fields?: {
-      name: string;
-      value: string;
-      inline?: boolean;
-    }[];
-  }[];
-};
-
 export type User = {
   id: string;
   username: string;
@@ -61,26 +7,32 @@ export type User = {
 
 export type App = { id: string; name: string };
 
+export type Attachment = {
+  id: string;
+  type: string;
+  filename: string | null;
+  url: string | null;
+  width: number | null;
+  height: number | null;
+  size: number | null;
+};
 export type Message = {
   id: string;
   content: string;
   sentAt: string;
-  appSpecificDataJson: string | null;
+  attachments: Attachment[];
   authorUsername: string;
   authorIdentifier: string | null;
   authorAvatarUrl: string | null;
 };
-
 export type Snippet = {
   id: string;
   public: boolean;
   title: string | null;
-  appSpecificDataJson: string | null;
-  views: number;
   creator: User | null;
   app: App;
   messages: Message[];
-  createdAt: string;
+  createdAt: Date;
 };
 export type SnippetInteraction = {
   views: number;

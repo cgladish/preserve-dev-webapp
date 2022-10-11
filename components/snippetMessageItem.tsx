@@ -1,32 +1,34 @@
-import { Attachment, Download } from "@mui/icons-material";
-import { Typography, Modal, ListItem, Avatar, Skeleton } from "@mui/material";
+import { Attachment as AttachmentIcon, Download } from "@mui/icons-material";
+import { Typography, Modal, ListItem, Avatar } from "@mui/material";
 import { format } from "date-fns";
 import filesize from "filesize";
 import { partition } from "lodash";
 import { useState } from "react";
-import { DiscordAppSpecificData, Message } from "../utils/types";
+import { Attachment, Message } from "../utils/types";
 
-const DiscordAttachmentsAndEmbeds = ({
-  appSpecificData,
+const Attachments = ({
+  attachments,
   scale = 1,
 }: {
-  appSpecificData: DiscordAppSpecificData;
+  attachments: Attachment[];
   scale?: number;
 }) => {
-  const [imageAttachments, nonImageAttachments] = appSpecificData?.attachments
-    ? partition(appSpecificData.attachments, ({ content_type }) =>
-        content_type?.includes("image")
-      )
-    : [];
+  const [imageAttachments, nonImageAttachments] = partition(
+    attachments,
+    ({ type }) => ["photo", "image"].includes(type)
+  );
 
   const [viewedImage, setViewedImage] = useState<{
     url: string;
-    filename: string;
+    filename: string | null;
   } | null>(null);
 
   return (
     <>
       {imageAttachments?.map(({ filename, url, width, height }, index) => {
+        if (!url) {
+          return null;
+        }
         const widthHeightRatio = width && height && width / height;
         let widthToUse: number | undefined;
         let heightToUse: number | undefined;
@@ -65,7 +67,7 @@ const DiscordAttachmentsAndEmbeds = ({
             </Typography>
             <img
               src={url}
-              alt={filename}
+              alt={filename ?? url}
               style={{
                 borderRadius: 4 * scale,
                 maxHeight: 300 * scale,
@@ -86,7 +88,7 @@ const DiscordAttachmentsAndEmbeds = ({
         <Modal onClose={() => setViewedImage(null)} open>
           <img
             src={viewedImage.url}
-            alt={viewedImage.filename}
+            alt={viewedImage.filename || viewedImage.url}
             style={{
               maxWidth: 800,
               maxHeight: 600,
@@ -100,8 +102,11 @@ const DiscordAttachmentsAndEmbeds = ({
           />
         </Modal>
       )}
-      {nonImageAttachments?.map(
-        ({ filename, url, content_type, size }, index) => (
+      {nonImageAttachments?.map(({ filename, url, type, size }, index) => {
+        if (!url) {
+          return;
+        }
+        return (
           <div
             key={index}
             style={{
@@ -128,7 +133,7 @@ const DiscordAttachmentsAndEmbeds = ({
                 alignItems: "center",
               }}
             >
-              <Attachment />
+              <AttachmentIcon />
               <div
                 style={{
                   display: "flex",
@@ -152,7 +157,7 @@ const DiscordAttachmentsAndEmbeds = ({
                   color="text.secondary"
                   style={{ fontSize: `${0.875 * scale}rem` }}
                 >
-                  {content_type}
+                  {type}
                 </Typography>
               </div>
             </div>
@@ -166,14 +171,13 @@ const DiscordAttachmentsAndEmbeds = ({
                 color="text.secondary"
                 style={{ fontSize: ".875rem", whiteSpace: "nowrap" }}
               >
-                {filesize(size)}
+                {size && filesize(size)}
               </Typography>
               <Download />
             </div>
           </div>
-        )
-      )}
-      {appSpecificData?.embeds?.map((embed) => "EMBED")}
+        );
+      })}
     </>
   );
 };
@@ -185,9 +189,6 @@ export default function MessageItem({
   message: Message;
   scale?: number;
 }) {
-  const appSpecificData =
-    message.appSpecificDataJson && JSON.parse(message.appSpecificDataJson);
-
   return (
     <ListItem
       style={{
@@ -249,10 +250,7 @@ export default function MessageItem({
           >
             {message.content}
           </Typography>
-          <DiscordAttachmentsAndEmbeds
-            appSpecificData={appSpecificData}
-            scale={scale}
-          />
+          <Attachments attachments={message.attachments} scale={scale} />
         </div>
       </div>
     </ListItem>

@@ -184,12 +184,16 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           }}
         >
           <Typography fontSize={14}>
-            Uploaded by{" "}
-            <Link href={`/u/${snippet.creator?.id}/snippets`}>
-              <a style={{ color: "#fff", textDecoration: "underline" }}>
-                @{snippet.creator?.displayName}
-              </a>
-            </Link>
+            {snippet.creator && (
+              <>
+                Uploaded by{" "}
+                <Link href={`/u/${snippet.creator?.id}/snippets`}>
+                  <a style={{ color: "#fff", textDecoration: "underline" }}>
+                    @{snippet.creator?.displayName}
+                  </a>
+                </Link>
+              </>
+            )}
           </Typography>
           <div
             style={{

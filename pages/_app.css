@@ -56,3 +56,7 @@ code {
   display: -webkit-box;
   -webkit-box-orient: vertical;
 }
+
+.title-input fieldset {
+  border: 0;
+}

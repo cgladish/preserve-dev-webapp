@@ -1,5 +1,6 @@
 import Layout from "../../components/layout";
 import { GetStaticPaths, GetStaticProps } from "next";
+import { debounce } from "lodash";
 import {
   Typography,
   List,
@@ -11,6 +12,7 @@ import {
 } from "@mui/material";
 import {
   forwardRef,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -63,6 +65,20 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
   const [interaction, setInteraction] = useState<SnippetInteraction | null>(
     null
   );
+
+  const [title, setTitle] = useState(snippet.title ?? "");
+  const updateTitle = useCallback(
+    debounce(async (title: string) => {
+      await fetch(`/api/v1/snippets/${snippet.id}`, {
+        method: "post",
+        body: JSON.stringify({ title }),
+      });
+    }, 500),
+    []
+  );
+  useEffect(() => {
+    updateTitle(title);
+  }, [title]);
 
   const {
     palette: { primary },
@@ -163,6 +179,12 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     [savedComments, comments]
   );
 
+  const isEditableSnippet =
+    !snippet.claimed ||
+    (!snippet.public &&
+      snippet.creator != null &&
+      snippet.creator.id === user?.id);
+
   return (
     <Layout
       title={snippet.title ? `${snippet.title} - Preserve.dev` : "Preserve.dev"}
@@ -180,9 +202,30 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           wordWrap: "break-word",
         }}
       >
-        <Typography variant="h5" style={{ paddingBottom: 10, fontWeight: 600 }}>
-          {snippet.title}
-        </Typography>
+        {isEditableSnippet ? (
+          <TextField
+            className="title-input"
+            inputProps={{
+              style: {
+                fontWeight: 600,
+                fontSize: "1.5rem",
+                padding: 0,
+                marginBottom: 10,
+              },
+            }}
+            variant="outlined"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Title your post..."
+          />
+        ) : (
+          <Typography
+            variant="h5"
+            style={{ paddingBottom: 10, fontWeight: 600 }}
+          >
+            {title}
+          </Typography>
+        )}
         <div
           style={{
             display: "flex",

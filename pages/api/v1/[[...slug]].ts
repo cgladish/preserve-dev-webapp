@@ -26,6 +26,17 @@ export default async function handler(
       data: req.body ? JSON.parse(req.body) : undefined,
     });
     res.status(a.status).send(JSON.stringify(a.data));
+    if (
+      req.method === "POST" &&
+      a.status === 200 &&
+      req.query.slug?.[0] === "snippets"
+    ) {
+      const snippetId = req.query.slug?.[1];
+      const subRoute = req.query.slug?.[2];
+      if (snippetId && (!subRoute || subRoute === "claim")) {
+        await res.revalidate(`/p/${snippetId}`);
+      }
+    }
   } catch (err) {
     const error = err as AxiosError;
     res

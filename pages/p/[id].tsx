@@ -76,9 +76,10 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     }, 500),
     []
   );
-  useEffect(() => {
+  const onChangeTitle = (title: string) => {
+    setTitle(title);
     updateTitle(title);
-  }, [title]);
+  };
 
   const {
     palette: { primary },
@@ -215,7 +216,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             }}
             variant="outlined"
             value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            onChange={(event) => onChangeTitle(event.target.value)}
             placeholder="Title your post..."
           />
         ) : (
@@ -458,11 +459,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     throw new Error(response.statusText);
   }
   const snippet = await response.json();
-  if (!snippet.claimed) {
-    fetch(
-      `${process.env.APP_URL}/api/revalidate/${snippetId}?secret=${process.env.REVALIDATION_SECRET}`
-    );
-  }
   return {
     props: {
       snippet,

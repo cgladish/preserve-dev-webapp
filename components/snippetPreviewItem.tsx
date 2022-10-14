@@ -57,7 +57,7 @@ const LoadingSnippetPreviewMessage = () => (
 
 export const LoadingSnippetPreviewItem = forwardRef<HTMLDivElement>(
   (_, ref) => (
-    <div className="snippet-preview-item" style={{ marginBottom: 30 }}>
+    <div className="snippet-preview-item" style={{ marginBottom: 50 }}>
       <Card ref={ref} style={{ width: 300, paddingBottom: 10 }}>
         <List style={{ paddingBottom: 10, paddingTop: 0 }} dense>
           <LoadingSnippetPreviewMessage />
@@ -114,7 +114,7 @@ export default function SnippetPreviewItem({
     <a
       className="snippet-preview-item"
       href={`/p/${snippet.id}`}
-      style={{ marginBottom: 30 }}
+      style={{ marginBottom: 50 }}
     >
       <Card style={{ width: 300, paddingBottom: 10 }}>
         {hiddenMessages > 0 && (

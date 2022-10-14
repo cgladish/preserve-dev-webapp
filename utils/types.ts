@@ -28,6 +28,7 @@ export type Message = {
 export type Snippet = {
   id: string;
   public: boolean;
+  claimed: boolean;
   title: string | null;
   creator: User | null;
   app: App;

@@ -68,7 +68,14 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     palette: { primary },
   } = useTheme();
 
-  const { user } = useContext(UserContext);
+  const { user, isLoading: isLoadingUser } = useContext(UserContext);
+  useEffect(() => {
+    if (!isLoadingUser && !snippet.claimed) {
+      (async () => {
+        await fetch(`/api/v1/snippets/${snippet.id}/claim`, { method: "post" });
+      })();
+    }
+  }, [isLoadingUser]);
 
   const messagesRef = useRef<HTMLUListElement>(null);
   useEffect(() => {
@@ -398,8 +405,9 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const snippetId = params?.id as string;
   const response = await fetch(
-    `${process.env.APP_URL}/api/v1/snippets/${params?.id as string}?full=true`
+    `${process.env.APP_URL}/api/v1/snippets/${snippetId}?full=true`
   );
   if (response.status === 404) {
     return { notFound: true };
@@ -407,6 +415,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     throw new Error(response.statusText);
   }
   const snippet = await response.json();
+  if (!snippet.claimed) {
+    fetch(
+      `${process.env.APP_URL}/api/revalidate/${snippetId}?secret=${process.env.REVALIDATION_SECRET}`
+    );
+  }
   return {
     props: {
       snippet,

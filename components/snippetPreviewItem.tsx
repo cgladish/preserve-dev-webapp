@@ -132,7 +132,11 @@ export default function SnippetPreviewItem({
             </Typography>
           </div>
         )}
-        <List style={{ paddingBottom: 10, paddingTop: 0 }} dense>
+        <List
+          className={snippet.nsfw ? "nsfw-snippet" : ""}
+          style={{ paddingBottom: 10, paddingTop: 0 }}
+          dense
+        >
           {messagesToShow.map((message) => (
             <MessageItem key={message.id} message={message} scale={0.8} />
           ))}

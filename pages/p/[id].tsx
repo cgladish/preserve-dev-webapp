@@ -9,7 +9,6 @@ import {
   Skeleton,
   TextField,
   useTheme,
-  Button,
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
@@ -34,6 +33,7 @@ import {
 } from "../../utils/types";
 import MessageItem from "../../components/snippetMessageItem";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const LoadingCommentItem = forwardRef<HTMLLIElement>((_, ref) => (
   <ListItem
@@ -199,6 +199,17 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     [savedComments, comments]
   );
 
+  const { reload } = useRouter();
+  const [isSavingPublic, setIsSavingPublic] = useState(false);
+  const onMakePublic = async () => {
+    setIsSavingPublic(true);
+    await fetch(`/api/v1/snippets/${snippet.id}`, {
+      method: "post",
+      body: JSON.stringify({ public: true }),
+    });
+    reload();
+  };
+
   const isEditableSnippet =
     !snippet.claimed ||
     (!snippet.public &&
@@ -317,9 +328,15 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                 marginLeft: 10,
               }}
             >
-              <Button variant="contained" size="large">
+              <LoadingButton
+                variant="contained"
+                size="large"
+                onClick={() => onMakePublic()}
+                loading={isSavingPublic}
+                disabled={isSavingPublic}
+              >
                 Make Public
-              </Button>
+              </LoadingButton>
               <FormControlLabel
                 control={
                   <Checkbox

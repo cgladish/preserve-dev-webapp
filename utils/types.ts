@@ -1,6 +1,7 @@
 export type User = {
   id: string;
   username: string;
+  over18: boolean;
   displayName: string;
   createdAt: Date;
 };
@@ -29,6 +30,7 @@ export type Snippet = {
   id: string;
   public: boolean;
   claimed: boolean;
+  nsfw: boolean;
   title: string | null;
   creator: User | null;
   app: App;

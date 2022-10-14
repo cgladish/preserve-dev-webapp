@@ -9,6 +9,9 @@ import {
   Skeleton,
   TextField,
   useTheme,
+  Button,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import {
   forwardRef,
@@ -66,6 +69,21 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     null
   );
 
+  const [nsfw, setNsfw] = useState(snippet.nsfw);
+  const updateNsfw = useCallback(
+    debounce(async (nsfw: boolean) => {
+      await fetch(`/api/v1/snippets/${snippet.id}`, {
+        method: "post",
+        body: JSON.stringify({ nsfw }),
+      });
+    }, 500),
+    []
+  );
+  const onChangeNsfw = (nsfw: boolean) => {
+    setNsfw(nsfw);
+    updateNsfw(nsfw);
+  };
+
   const [title, setTitle] = useState(snippet.title ?? "");
   const updateTitle = useCallback(
     debounce(async (title: string) => {
@@ -77,8 +95,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     []
   );
   const onChangeTitle = (title: string) => {
-    setTitle(title);
-    updateTitle(title);
+    const shortenedTitle = title.slice(0, 50);
+    setTitle(shortenedTitle);
+    updateTitle(shortenedTitle);
   };
 
   const {
@@ -203,75 +222,115 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           wordWrap: "break-word",
         }}
       >
-        {isEditableSnippet ? (
-          <TextField
-            className="title-input"
-            inputProps={{
-              style: {
-                fontWeight: 600,
-                fontSize: "1.5rem",
-                padding: 0,
-                marginBottom: 10,
-              },
-            }}
-            variant="outlined"
-            value={title}
-            onChange={(event) => onChangeTitle(event.target.value)}
-            placeholder="Title your post..."
-          />
-        ) : (
-          <Typography
-            variant="h5"
-            style={{ paddingBottom: 10, fontWeight: 600 }}
-          >
-            {title}
-          </Typography>
-        )}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            justifyContent: "space-between",
             marginBottom: 20,
           }}
         >
-          <Typography fontSize={14}>
-            {snippet.creator && (
-              <>
-                Uploaded by{" "}
-                <Link href={`/u/${snippet.creator?.id}/snippets`}>
-                  <a style={{ color: "#fff", textDecoration: "underline" }}>
-                    @{snippet.creator?.displayName}
-                  </a>
-                </Link>
-              </>
-            )}
-          </Typography>
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              color: "#aaa",
+              flexDirection: "column",
               width: "100%",
-              height: 30,
             }}
           >
-            {interaction ? (
-              <>
-                <Typography fontSize={12}>{interaction.views} Views</Typography>
-                <Typography
-                  fontSize={12}
-                  style={{ marginLeft: 5, marginRight: 5 }}
-                >
-                  •
-                </Typography>
-                <Typography fontSize={12}>
-                  Posted {timeAgo.format(new Date(snippet.createdAt))}
-                </Typography>
-              </>
+            {isEditableSnippet ? (
+              <TextField
+                className="title-input"
+                inputProps={{
+                  style: {
+                    fontWeight: 600,
+                    fontSize: "1.5rem",
+                    padding: 0,
+                    marginBottom: 10,
+                  },
+                }}
+                variant="outlined"
+                value={title}
+                onChange={(event) => onChangeTitle(event.target.value)}
+                placeholder="Title your post..."
+              />
             ) : (
-              <Skeleton style={{ width: 150 }} />
+              <Typography
+                variant="h5"
+                style={{ paddingBottom: 10, fontWeight: 600 }}
+              >
+                {title}
+              </Typography>
             )}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Typography fontSize={14}>
+                {snippet.creator && (
+                  <>
+                    Uploaded by{" "}
+                    <Link href={`/u/${snippet.creator?.id}/snippets`}>
+                      <a style={{ color: "#fff", textDecoration: "underline" }}>
+                        @{snippet.creator?.displayName}
+                      </a>
+                    </Link>
+                  </>
+                )}
+              </Typography>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#aaa",
+                  width: "100%",
+                  height: 30,
+                }}
+              >
+                {interaction ? (
+                  <>
+                    <Typography fontSize={12}>
+                      {interaction.views} Views
+                    </Typography>
+                    <Typography
+                      fontSize={12}
+                      style={{ marginLeft: 5, marginRight: 5 }}
+                    >
+                      •
+                    </Typography>
+                    <Typography fontSize={12}>
+                      Posted {timeAgo.format(new Date(snippet.createdAt))}
+                    </Typography>
+                  </>
+                ) : (
+                  <Skeleton style={{ width: 150 }} />
+                )}
+              </div>
+            </div>
           </div>
+          {isEditableSnippet && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: 300,
+                marginLeft: 10,
+              }}
+            >
+              <Button variant="contained" size="large">
+                Make Public
+              </Button>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    value={nsfw}
+                    onChange={(event) => onChangeNsfw(event.target.checked)}
+                  />
+                }
+                label="Includes NSFW content"
+              />
+            </div>
+          )}
         </div>
         <Card
           style={{
@@ -299,141 +358,153 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             ))}
           </List>
         </Card>
-        <form
-          style={{ marginTop: 150, background: "#222", borderRadius: 4 }}
-          onSubmit={(event) => {
-            event.preventDefault();
-            onCommentSubmit();
-          }}
-        >
-          <TextField
-            style={{ width: "100%" }}
-            InputProps={{ style: { paddingTop: 10 } }}
-            placeholder="Add a comment"
-            variant="filled"
-            multiline
-            minRows={3}
-            maxRows={3}
-            value={commentText}
-            onChange={(event) => setCommentText(event.target.value)}
-          />
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              height: 50,
-              borderRadius: "0 0 4px 4px",
-              alignItems: "center",
-              justifyContent: "flex-end",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                width: 70,
-                justifyContent: "end",
-                marginRight: 10,
+        {snippet.public && (
+          <>
+            <form
+              style={{ marginTop: 150, background: "#222", borderRadius: 4 }}
+              onSubmit={(event) => {
+                event.preventDefault();
+                onCommentSubmit();
               }}
             >
-              <Typography
-                fontSize={14}
-                color={
-                  commentText.length > MAX_COMMENT_LENGTH ? "error" : undefined
-                }
-              >
-                {commentText.length}/{MAX_COMMENT_LENGTH}
-              </Typography>
-            </div>
-            <LoadingButton
-              disabled={isCommentSubmitDisabled}
-              loading={isSavingComment}
-              type="submit"
-              variant="contained"
-              size="small"
-              style={{ marginRight: 10 }}
-            >
-              Save
-            </LoadingButton>
-          </div>
-        </form>
-        <div style={{ height: 35, marginTop: 40 }}>
-          {comments ? (
-            <Typography
-              variant="h6"
-              fontWeight={500}
-              style={{
-                color: "#ccc",
-              }}
-            >
-              {comments.totalCount + savedComments.length} Comments
-            </Typography>
-          ) : (
-            <Skeleton height="100%" width={200} />
-          )}
-        </div>
-        {!comments?.data.length && comments?.isLastPage && (
-          <Typography style={{ borderTop: "1px solid #666", paddingTop: 20 }}>
-            There is nothing to see here.
-          </Typography>
-        )}
-        <List dense>
-          {[...savedComments, ...commentsFilterSavedComments].map((comment) => (
-            <ListItem
-              key={comment.id}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                borderTop: "1px solid #666",
-                alignItems: "flex-start",
-                padding: "5px 5px 15px 5px",
-                background: comment.savedNow ? "#222" : "unset",
-              }}
-            >
+              <TextField
+                style={{ width: "100%" }}
+                InputProps={{ style: { paddingTop: 10 } }}
+                placeholder="Add a comment"
+                variant="filled"
+                multiline
+                minRows={3}
+                maxRows={3}
+                value={commentText}
+                onChange={(event) => setCommentText(event.target.value)}
+              />
               <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  color: "#aaa",
                   width: "100%",
-                  height: 30,
+                  height: 50,
+                  borderRadius: "0 0 4px 4px",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
                 }}
               >
-                <Typography
-                  fontSize={12}
-                  color={
-                    comment.creator.id === user?.id ? "primary" : undefined
-                  }
+                <div
+                  style={{
+                    display: "flex",
+                    width: 70,
+                    justifyContent: "end",
+                    marginRight: 10,
+                  }}
                 >
-                  @{comment.creator.displayName}
-                </Typography>
-                <Typography
-                  fontSize={12}
-                  style={{ marginLeft: 5, marginRight: 5 }}
+                  <Typography
+                    fontSize={14}
+                    color={
+                      commentText.length > MAX_COMMENT_LENGTH
+                        ? "error"
+                        : undefined
+                    }
+                  >
+                    {commentText.length}/{MAX_COMMENT_LENGTH}
+                  </Typography>
+                </div>
+                <LoadingButton
+                  disabled={isCommentSubmitDisabled}
+                  loading={isSavingComment}
+                  type="submit"
+                  variant="contained"
+                  size="small"
+                  style={{ marginRight: 10 }}
                 >
-                  •
-                </Typography>
-                <Typography fontSize={12}>
-                  Posted {timeAgo.format(new Date(comment.createdAt))}
-                </Typography>
+                  Save
+                </LoadingButton>
               </div>
+            </form>
+            <div style={{ height: 35, marginTop: 40 }}>
+              {comments ? (
+                <Typography
+                  variant="h6"
+                  fontWeight={500}
+                  style={{
+                    color: "#ccc",
+                  }}
+                >
+                  {comments.totalCount + savedComments.length} Comments
+                </Typography>
+              ) : (
+                <Skeleton height="100%" width={200} />
+              )}
+            </div>
+            {!comments?.data.length && comments?.isLastPage && (
               <Typography
-                style={{
-                  wordWrap: "break-word",
-                  display: "inline-block",
-                  maxWidth: "850px",
-                }}
+                style={{ borderTop: "1px solid #666", paddingTop: 20 }}
               >
-                {comment.content}
+                There is nothing to see here.
               </Typography>
-            </ListItem>
-          ))}
-        </List>
-        {!comments?.isLastPage && (
-          <>
-            <LoadingCommentItem ref={commentsBottomRef} />
-            <LoadingCommentItem />
-            <LoadingCommentItem />
-            <LoadingCommentItem />
+            )}
+            <List dense>
+              {[...savedComments, ...commentsFilterSavedComments].map(
+                (comment) => (
+                  <ListItem
+                    key={comment.id}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      borderTop: "1px solid #666",
+                      alignItems: "flex-start",
+                      padding: "5px 5px 15px 5px",
+                      background: comment.savedNow ? "#222" : "unset",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#aaa",
+                        width: "100%",
+                        height: 30,
+                      }}
+                    >
+                      <Typography
+                        fontSize={12}
+                        color={
+                          comment.creator.id === user?.id
+                            ? "primary"
+                            : undefined
+                        }
+                      >
+                        @{comment.creator.displayName}
+                      </Typography>
+                      <Typography
+                        fontSize={12}
+                        style={{ marginLeft: 5, marginRight: 5 }}
+                      >
+                        •
+                      </Typography>
+                      <Typography fontSize={12}>
+                        Posted {timeAgo.format(new Date(comment.createdAt))}
+                      </Typography>
+                    </div>
+                    <Typography
+                      style={{
+                        wordWrap: "break-word",
+                        display: "inline-block",
+                        maxWidth: "850px",
+                      }}
+                    >
+                      {comment.content}
+                    </Typography>
+                  </ListItem>
+                )
+              )}
+            </List>
+            {!comments?.isLastPage && (
+              <>
+                <LoadingCommentItem ref={commentsBottomRef} />
+                <LoadingCommentItem />
+                <LoadingCommentItem />
+                <LoadingCommentItem />
+              </>
+            )}
           </>
         )}
       </div>

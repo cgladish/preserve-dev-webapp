@@ -7,7 +7,6 @@ import { useContext } from "react";
 import { Typography } from "@mui/material";
 
 const UserSnippets: NextPage = ({ user }: { user: User }) => {
-  const { user: signedInUser, isLoading } = useContext(UserContext);
   return (
     <Layout title={`snippets by ${user.username} - Preserve.dev`} withHeader>
       <div

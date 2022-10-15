@@ -481,16 +481,21 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                         height: 30,
                       }}
                     >
-                      <Typography
-                        fontSize={12}
-                        color={
-                          comment.creator.id === user?.id
-                            ? "primary"
-                            : undefined
-                        }
-                      >
-                        {comment.creator.displayName}
-                      </Typography>
+                      <Link href={`/u/${comment.creator.id}/snippets`}>
+                        <a
+                          style={{
+                            color:
+                              comment.creator.id === user?.id
+                                ? primary.main
+                                : "#eee",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          <Typography fontSize={12}>
+                            {comment.creator.displayName}
+                          </Typography>
+                        </a>
+                      </Link>
                       <Typography
                         fontSize={12}
                         style={{ marginLeft: 5, marginRight: 5 }}

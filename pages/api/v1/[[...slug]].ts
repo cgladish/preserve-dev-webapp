@@ -25,7 +25,6 @@ export default async function handler(
       params: omit(req.query, "slug"),
       data: req.body ? JSON.parse(req.body) : undefined,
     });
-    res.status(a.status).send(JSON.stringify(a.data));
     if (
       req.method === "POST" &&
       a.status === 200 &&
@@ -37,6 +36,7 @@ export default async function handler(
         await res.revalidate(`/p/${snippetId}`);
       }
     }
+    res.status(a.status).send(JSON.stringify(a.data));
   } catch (err) {
     const error = err as AxiosError;
     res

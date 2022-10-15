@@ -202,12 +202,19 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
   const { reload } = useRouter();
   const [isSavingPublic, setIsSavingPublic] = useState(false);
   const onMakePublic = async () => {
-    setIsSavingPublic(true);
-    await fetch(`/api/v1/snippets/${snippet.id}`, {
-      method: "post",
-      body: JSON.stringify({ public: true }),
-    });
-    reload();
+    try {
+      setIsSavingPublic(true);
+      const response = await fetch(`/api/v1/snippets/${snippet.id}`, {
+        method: "post",
+        body: JSON.stringify({ public: true }),
+      });
+      if (response.status !== 200) {
+        throw new Error(response.statusText);
+      }
+      reload();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const isEditableSnippet =

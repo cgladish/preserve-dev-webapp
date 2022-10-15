@@ -55,7 +55,7 @@ export default function SnippetsPreview({
 
   return (
     <div
-      id="recent-snippets"
+      className="recent-snippets"
       style={{
         display: "flex",
         flexDirection: "column",

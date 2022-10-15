@@ -4,6 +4,7 @@ import { UserContext } from "../../../components/userProvider";
 import SnippetsPreview from "../../../components/snippetsPreview";
 import { User } from "../../../utils/types";
 import { useContext } from "react";
+import { Typography } from "@mui/material";
 
 const UserSnippets: NextPage = ({ user }: { user: User }) => {
   const { user: signedInUser, isLoading } = useContext(UserContext);
@@ -18,16 +19,12 @@ const UserSnippets: NextPage = ({ user }: { user: User }) => {
           paddingRight: 20,
         }}
       >
-        <SnippetsPreview
-          title={
-            isLoading
-              ? ""
-              : `${
-                  signedInUser?.id === user.id ? "Your" : `${user.username}'s`
-                } Snippets`
-          }
-          creatorId={user.id}
-        />
+        <div className="recent-snippets" style={{ marginTop: 20 }}>
+          <Typography variant="h4" style={{ fontWeight: 700 }}>
+            {user?.displayName}
+          </Typography>
+        </div>
+        <SnippetsPreview title="Created Snippets" creatorId={user.id} />
       </div>
     </Layout>
   );

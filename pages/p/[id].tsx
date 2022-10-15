@@ -283,7 +283,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                     Uploaded by{" "}
                     <Link href={`/u/${snippet.creator?.id}/snippets`}>
                       <a style={{ color: "#fff", textDecoration: "underline" }}>
-                        @{snippet.creator?.displayName}
+                        {snippet.creator?.displayName}
                       </a>
                     </Link>
                   </>
@@ -489,7 +489,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                             : undefined
                         }
                       >
-                        @{comment.creator.displayName}
+                        {comment.creator.displayName}
                       </Typography>
                       <Typography
                         fontSize={12}

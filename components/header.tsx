@@ -2,10 +2,10 @@ import { Button, Menu, MenuItem, Typography } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "../components/userProvider";
-import { useTheme } from "@mui/material";
+import { useUser } from "@auth0/nextjs-auth0";
 
 export default function Header() {
-  const theme = useTheme();
+  const { user: auth0User } = useUser();
   const { user, isLoading } = useContext(UserContext);
   const menuAnchorRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -59,6 +59,11 @@ export default function Header() {
                 horizontal: "right",
               }}
             >
+              {!!auth0User?.["https://auth.preserve.dev/isAdmin"] && (
+                <a href={`/admin/review`} style={{ color: "unset" }}>
+                  <MenuItem>Admin - Review Snippets</MenuItem>
+                </a>
+              )}
               <a href={`/u/${user.id}/snippets`} style={{ color: "unset" }}>
                 <MenuItem>Your Snippets</MenuItem>
               </a>

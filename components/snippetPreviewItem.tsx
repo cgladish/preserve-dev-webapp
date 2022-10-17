@@ -138,7 +138,7 @@ export default function SnippetPreviewItem({
           dense
         >
           {messagesToShow.map((message) => (
-            <MessageItem key={message.id} message={message} scale={0.8} />
+            <MessageItem key={message.id} message={message} isPreview />
           ))}
         </List>
         <div

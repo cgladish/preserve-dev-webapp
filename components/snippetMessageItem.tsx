@@ -6,13 +6,17 @@ import { partition } from "lodash";
 import { useState } from "react";
 import { Attachment, Message } from "../utils/types";
 
+const PREVIEW_SCALE = 0.8;
+
 const Attachments = ({
   attachments,
-  scale = 1,
+  isPreview = false,
 }: {
   attachments: Attachment[];
-  scale?: number;
+  isPreview?: boolean;
 }) => {
+  const scale = isPreview ? PREVIEW_SCALE : 1.0;
+
   const [imageAttachments, nonImageAttachments] = partition(
     attachments,
     ({ type }) => ["photo", "image"].includes(type)
@@ -50,21 +54,27 @@ const Attachments = ({
               alignItems: "flex-start",
             }}
           >
-            <Typography
-              className="message-view-original"
-              color="text.secondary"
-              style={{
-                fontSize: `${0.75 * scale}rem`,
-                cursor: "pointer",
-                width: "fit-content",
-              }}
-              onClick={(event) => {
-                event.stopPropagation();
-                window.open(url, "_blank");
-              }}
-            >
-              View Original
-            </Typography>
+            {!isPreview && (
+              <Typography
+                className="message-view-original"
+                color="text.secondary"
+                style={{
+                  fontSize: `${0.75 * scale}rem`,
+                  cursor: "pointer",
+                  width: "fit-content",
+                }}
+                onClick={
+                  isPreview
+                    ? undefined
+                    : (event) => {
+                        event.stopPropagation();
+                        window.open(url, "_blank");
+                      }
+                }
+              >
+                View Original
+              </Typography>
+            )}
             <img
               src={url}
               alt={filename ?? url}
@@ -76,10 +86,14 @@ const Attachments = ({
                 width: widthToUse ?? "auto",
                 cursor: "pointer",
               }}
-              onClick={(event) => {
-                event.stopPropagation();
-                setViewedImage({ url, filename });
-              }}
+              onClick={
+                isPreview
+                  ? undefined
+                  : (event) => {
+                      event.stopPropagation();
+                      setViewedImage({ url, filename });
+                    }
+              }
             />
           </div>
         );
@@ -122,10 +136,14 @@ const Attachments = ({
               width: 400,
               justifyContent: "space-between",
             }}
-            onClick={(event) => {
-              event.stopPropagation();
-              window.open(url, "_blank");
-            }}
+            onClick={
+              isPreview
+                ? undefined
+                : (event) => {
+                    event.stopPropagation();
+                    window.open(url, "_blank");
+                  }
+            }
           >
             <div
               style={{
@@ -184,11 +202,12 @@ const Attachments = ({
 
 export default function MessageItem({
   message,
-  scale = 1,
+  isPreview = false,
 }: {
   message: Message;
-  scale?: number;
+  isPreview?: boolean;
 }) {
+  const scale = isPreview ? PREVIEW_SCALE : 1.0;
   return (
     <ListItem
       style={{
@@ -250,7 +269,10 @@ export default function MessageItem({
           >
             {message.content}
           </Typography>
-          <Attachments attachments={message.attachments} scale={scale} />
+          <Attachments
+            attachments={message.attachments}
+            isPreview={isPreview}
+          />
         </div>
       </div>
     </ListItem>

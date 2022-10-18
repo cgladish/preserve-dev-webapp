@@ -11,6 +11,8 @@ import {
   useTheme,
   FormControlLabel,
   Checkbox,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import {
   forwardRef,
@@ -21,6 +23,7 @@ import {
   useRef,
   useState,
 } from "react";
+import qs from "query-string";
 import { timeAgo } from "../../utils";
 import { LoadingButton } from "@mui/lab";
 import { useIsInViewport } from "../../hooks/useIsInViewport";
@@ -127,6 +130,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
 
   const commentsBottomRef = useRef<HTMLLIElement>(null);
   const [isFetchingComments, setIsFetchingComments] = useState<boolean>();
+  const [commentsSortBy, setCommentsSortBy] = useState<"newest" | "oldest">(
+    "newest"
+  );
   const [comments, setComments] = useState<CommentsPaginationInfo | null>(null);
   const isCommentsBottomRefInViewport = useIsInViewport(commentsBottomRef);
   useEffect(() => {
@@ -139,12 +145,14 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
       ) {
         setIsFetchingComments(true);
         try {
+          const queryString = qs.stringify({
+            cursor: comments
+              ? comments.data[comments.data.length - 1]?.id
+              : undefined,
+            sortBy: commentsSortBy,
+          });
           const response = await fetch(
-            `/api/v1/snippets/${snippet.id}/comments${
-              comments
-                ? `?cursor=${comments.data[comments.data.length - 1]?.id}`
-                : ""
-            }`
+            `/api/v1/snippets/${snippet.id}/comments?${queryString}`
           );
           if (response.status !== 200) {
             throw new Error(response.statusText);
@@ -161,7 +169,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
         setIsFetchingComments(false);
       }
     })();
-  }, [isCommentsBottomRefInViewport]);
+  }, [comments, isCommentsBottomRefInViewport]);
 
   const [savedComments, setSavedComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState<string>("");
@@ -443,7 +451,14 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                 </LoadingButton>
               </div>
             </form>
-            <div style={{ height: 35, marginTop: 40 }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                height: 35,
+                marginTop: 40,
+              }}
+            >
               {comments ? (
                 <Typography
                   variant="h6"
@@ -457,6 +472,16 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
               ) : (
                 <Skeleton height="100%" width={200} />
               )}
+              <Select
+                value={commentsSortBy}
+                onChange={(event) => {
+                  setCommentsSortBy(event.target.value as any);
+                  setComments(null);
+                }}
+              >
+                <MenuItem value="newest">Newest</MenuItem>
+                <MenuItem value="oldest">Oldest</MenuItem>
+              </Select>
             </div>
             {!comments?.data.length && comments?.isLastPage && (
               <Typography

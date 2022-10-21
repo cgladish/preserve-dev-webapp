@@ -587,7 +587,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
   return {
     paths: allSnippets.map(({ id }) => ({ params: { id } })),
-    fallback: true,
+    fallback: "blocking",
   };
 };
 

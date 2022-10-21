@@ -574,7 +574,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   // Prerender first 3 pages
   for (let i = 0; i < 3; ++i) {
     const response = await fetch(
-      `/api/v1/snippets/preview?${queryString.stringify({
+      `${process.env.APP_URL}/api/v1/snippets/preview?${queryString.stringify({
         cursor: allSnippets[allSnippets.length - 1]?.id,
       })}`
     );

@@ -18,6 +18,10 @@ export default class MyDocument extends Document<{
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
           <Script
             async
             src="https://www.googletagmanager.com/gtag/js?id=G-1RSMKYESXN"
@@ -33,10 +37,6 @@ export default class MyDocument extends Document<{
             `,
             }}
           />
-        </Head>
-        <body>
-          <Main />
-          <NextScript />
         </body>
       </Html>
     );

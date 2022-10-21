@@ -2,6 +2,7 @@ import Layout from "../../components/layout";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { debounce } from "lodash";
 import queryString from "query-string";
+import classnames from "classnames";
 import {
   Typography,
   List,
@@ -14,6 +15,10 @@ import {
   Checkbox,
   MenuItem,
   Select,
+  Button,
+  IconButton,
+  Menu,
+  ListItemIcon,
 } from "@mui/material";
 import {
   forwardRef,
@@ -40,6 +45,7 @@ import {
 import MessageItem from "../../components/snippetMessageItem";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Flag, MoreHoriz } from "@mui/icons-material";
 
 const LoadingCommentItem = forwardRef<HTMLLIElement>((_, ref) => (
   <ListItem
@@ -74,6 +80,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
   const [interaction, setInteraction] = useState<SnippetInteraction | null>(
     null
   );
+
+  const [isSnippetMenuOpen, setIsSnippetMenuOpen] = useState<boolean>(false);
+  const snippetMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const [nsfw, setNsfw] = useState(snippet.nsfw);
   const updateNsfw = useCallback(
@@ -368,6 +377,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           )}
         </div>
         <Card
+          className={classnames("snippet-content", {
+            "snippet-content-menu-open": isSnippetMenuOpen,
+          })}
           style={{
             display: "flex",
             flexDirection: "column",
@@ -392,6 +404,28 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
               <MessageItem key={message.id} message={message} />
             ))}
           </List>
+          <IconButton
+            className="snippet-menu-button"
+            style={{ position: "absolute", top: 5, right: 15 }}
+            ref={snippetMenuButtonRef}
+            onClick={() => setIsSnippetMenuOpen(true)}
+          >
+            <MoreHoriz />
+          </IconButton>
+          <Menu
+            anchorEl={snippetMenuButtonRef.current}
+            open={isSnippetMenuOpen}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            onClose={() => setIsSnippetMenuOpen(false)}
+          >
+            <MenuItem onClick={() => {}}>
+              <ListItemIcon>
+                <Flag />
+              </ListItemIcon>
+              <Typography>Request Deletion</Typography>
+            </MenuItem>
+          </Menu>
         </Card>
         {snippet.public && (
           <>
@@ -481,6 +515,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                   setCommentsSortBy(event.target.value as any);
                   setComments(null);
                 }}
+                style={{ marginBottom: 5 }}
               >
                 <MenuItem value="newest">Newest</MenuItem>
                 <MenuItem value="oldest">Oldest</MenuItem>

@@ -6,6 +6,7 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
 import UserProvider from "../components/userProvider";
 import { useEffect } from "react";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
 const theme = createTheme({
   palette: {
@@ -47,25 +48,19 @@ export default function App({
   emotionCache = createCache({ key: "css", prepend: true }),
   pageProps: { ...pageProps },
 }: Props) {
-  useEffect(() => {
-    const win = window as any;
-    win.dataLayer = win.dataLayer || [];
-    win.gtag = function () {
-      win.dataLayer.push(arguments);
-    };
-    win.gtag("js", new Date());
-    win.gtag("config", "G-1RSMKYESXN");
-  }, []);
   return (
-    <Auth0UserProvider>
-      <UserProvider>
-        <CacheProvider value={emotionCache}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </CacheProvider>
-      </UserProvider>
-    </Auth0UserProvider>
+    <>
+      <GoogleAnalytics gaMeasurementId="G-1RSMKYESXN" trackPageViews />
+      <Auth0UserProvider>
+        <UserProvider>
+          <CacheProvider value={emotionCache}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </CacheProvider>
+        </UserProvider>
+      </Auth0UserProvider>
+    </>
   );
 }

@@ -3,7 +3,6 @@ import Document, { Html, Head, Main, NextScript } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import createCache from "@emotion/cache";
 import _App, { Props } from "./_app";
-import Script from "next/script";
 
 export default class MyDocument extends Document<{
   emotionStyleTags: React.ReactNode[];
@@ -22,10 +21,6 @@ export default class MyDocument extends Document<{
         <body>
           <Main />
           <NextScript />
-          <Script
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-1RSMKYESXN"
-          />
         </body>
       </Html>
     );

@@ -15,7 +15,6 @@ import {
   Checkbox,
   MenuItem,
   Select,
-  Button,
   IconButton,
   Menu,
   ListItemIcon,
@@ -46,6 +45,7 @@ import MessageItem from "../../components/snippetMessageItem";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Flag, MoreHoriz } from "@mui/icons-material";
+import RequestDeletionModal from "../../components/requestionDeletionModal";
 
 const LoadingCommentItem = forwardRef<HTMLLIElement>((_, ref) => (
   <ListItem
@@ -83,6 +83,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
 
   const [isSnippetMenuOpen, setIsSnippetMenuOpen] = useState<boolean>(false);
   const snippetMenuButtonRef = useRef<HTMLButtonElement>(null);
+
+  const [isRequestDeletionModalOpen, setIsRequestDeletionModalOpen] =
+    useState<boolean>(false);
 
   const [nsfw, setNsfw] = useState(snippet.nsfw);
   const updateNsfw = useCallback(
@@ -419,7 +422,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             transformOrigin={{ vertical: "top", horizontal: "right" }}
             onClose={() => setIsSnippetMenuOpen(false)}
           >
-            <MenuItem onClick={() => {}}>
+            <MenuItem onClick={() => setIsRequestDeletionModalOpen(true)}>
               <ListItemIcon>
                 <Flag />
               </ListItemIcon>
@@ -427,6 +430,10 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             </MenuItem>
           </Menu>
         </Card>
+        <RequestDeletionModal
+          open={isRequestDeletionModalOpen}
+          onClose={() => setIsRequestDeletionModalOpen(false)}
+        />
         {snippet.public && (
           <>
             <form

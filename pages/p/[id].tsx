@@ -1,6 +1,7 @@
 import Layout from "../../components/layout";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { debounce } from "lodash";
+import queryString from "query-string";
 import {
   Typography,
   List,
@@ -33,6 +34,8 @@ import {
   Comment,
   Snippet,
   SnippetInteraction,
+  SnippetPreviewsPaginationInfo,
+  SnippetPreview,
 } from "../../utils/types";
 import MessageItem from "../../components/snippetMessageItem";
 import Link from "next/link";
@@ -566,10 +569,25 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
   );
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const allSnippets: SnippetPreview[] = [];
+  // Prerender first 3 pages
+  for (let i = 0; i < 3; ++i) {
+    const response = await fetch(
+      `/api/v1/snippets/preview?${queryString.stringify({
+        cursor: allSnippets[allSnippets.length - 1]?.id,
+      })}`
+    );
+    if (response.status !== 200) {
+      throw new Error(response.statusText);
+    }
+    const fetchedSnippets: SnippetPreviewsPaginationInfo =
+      await response.json();
+    allSnippets.push(...fetchedSnippets.data);
+  }
   return {
-    paths: [],
-    fallback: "blocking",
+    paths: allSnippets.map(({ id }) => ({ params: { id } })),
+    fallback: true,
   };
 };
 

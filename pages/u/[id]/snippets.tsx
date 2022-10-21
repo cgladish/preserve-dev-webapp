@@ -32,7 +32,7 @@ const UserSnippets: NextPage = ({ user }: { user: User }) => {
 export const getStaticPaths: GetStaticPaths = () => {
   return {
     paths: [],
-    fallback: "blocking",
+    fallback: true,
   };
 };
 

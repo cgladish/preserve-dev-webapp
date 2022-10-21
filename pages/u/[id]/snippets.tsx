@@ -38,7 +38,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const response = await fetch(
-    `${process.env.APP_URL}/api/v1/users/${params?.id as string}`
+    `${process.env.API_URL}/users/${params?.id as string}`
   );
   if (response.status === 404) {
     return { notFound: true };

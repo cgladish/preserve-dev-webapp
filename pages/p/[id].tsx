@@ -574,7 +574,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   // Prerender first 3 pages
   for (let i = 0; i < 3; ++i) {
     const response = await fetch(
-      `${process.env.APP_URL}/api/v1/snippets/preview?${queryString.stringify({
+      `${process.env.API_URL}/snippets/preview?${queryString.stringify({
         cursor: allSnippets[allSnippets.length - 1]?.id,
       })}`
     );
@@ -594,7 +594,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const snippetId = params?.id as string;
   const response = await fetch(
-    `${process.env.APP_URL}/api/v1/snippets/${snippetId}?full=true`
+    `${process.env.API_URL}/snippets/${snippetId}?full=true`
   );
   if (response.status === 404) {
     return { notFound: true };

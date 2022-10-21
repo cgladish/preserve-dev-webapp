@@ -5,6 +5,7 @@ import createCache from "@emotion/cache";
 import { CacheProvider, EmotionCache } from "@emotion/react";
 import { UserProvider as Auth0UserProvider } from "@auth0/nextjs-auth0";
 import UserProvider from "../components/userProvider";
+import { useEffect } from "react";
 
 const theme = createTheme({
   palette: {
@@ -46,6 +47,15 @@ export default function App({
   emotionCache = createCache({ key: "css", prepend: true }),
   pageProps: { ...pageProps },
 }: Props) {
+  useEffect(() => {
+    const win = window as any;
+    win.dataLayer = win.dataLayer || [];
+    win.gtag = function () {
+      win.dataLayer.push(arguments);
+    };
+    win.gtag("js", new Date());
+    win.gtag("config", "G-1RSMKYESXN");
+  }, []);
   return (
     <Auth0UserProvider>
       <UserProvider>

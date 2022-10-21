@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Script from "next/script";
 import { ReactNode } from "react";
 import Header from "./header";
 
@@ -20,7 +21,7 @@ export default function Layout({
       <Head>
         <title>{title}</title>
         {withAds && (
-          <script
+          <Script
             async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7658970265006187"
             crossOrigin="anonymous"

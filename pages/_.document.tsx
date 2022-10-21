@@ -3,6 +3,7 @@ import Document, { Html, Head, Main, NextScript } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import createCache from "@emotion/cache";
 import _App, { Props } from "./_app";
+import Script from "next/script";
 
 export default class MyDocument extends Document<{
   emotionStyleTags: React.ReactNode[];
@@ -16,6 +17,21 @@ export default class MyDocument extends Document<{
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
+          <Script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-1RSMKYESXN"
+          />
+          <Script
+            dangerouslySetInnerHTML={{
+              __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+            
+              gtag('config', 'G-1RSMKYESXN');
+            `,
+            }}
           />
         </Head>
         <body>

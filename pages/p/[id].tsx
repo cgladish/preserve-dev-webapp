@@ -45,7 +45,7 @@ import MessageItem from "../../components/snippetMessageItem";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Flag, MoreHoriz } from "@mui/icons-material";
-import RequestDeletionModal from "../../components/requestionDeletionModal";
+import RequestDeletionModal from "../../components/requestDeletionModal";
 
 const LoadingCommentItem = forwardRef<HTMLLIElement>((_, ref) => (
   <ListItem
@@ -422,7 +422,12 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             transformOrigin={{ vertical: "top", horizontal: "right" }}
             onClose={() => setIsSnippetMenuOpen(false)}
           >
-            <MenuItem onClick={() => setIsRequestDeletionModalOpen(true)}>
+            <MenuItem
+              onClick={() => {
+                setIsSnippetMenuOpen(false);
+                setIsRequestDeletionModalOpen(true);
+              }}
+            >
               <ListItemIcon>
                 <Flag />
               </ListItemIcon>
@@ -433,6 +438,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
         <RequestDeletionModal
           open={isRequestDeletionModalOpen}
           onClose={() => setIsRequestDeletionModalOpen(false)}
+          snippetId={snippet.id}
         />
         {snippet.public && (
           <>

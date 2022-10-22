@@ -11,9 +11,11 @@ import { useEffect, useState } from "react";
 
 export default function RequestDeletionModal({
   open,
+  snippetId,
   onClose,
 }: {
   open: boolean;
+  snippetId: string;
   onClose: () => void;
 }) {
   const {
@@ -25,16 +27,41 @@ export default function RequestDeletionModal({
   const [reasonText, setReasonText] = useState<string>("");
   useEffect(() => {
     setReasonText("");
+    setIsSubmitting(false);
   }, [open]);
 
   const isSubmitDisabled = !reasonText.length || reasonText.length > 1000;
 
-  const onSubmit = () => {
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const onSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(
+        `/api/v1/snippets/${snippetId}/deletionRequest`,
+        {
+          method: "post",
+          body: JSON.stringify({ reasonText }),
+        }
+      );
+      if (response.status !== 201) {
+        throw new Error(response.statusText);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setIsSubmitting(false);
     onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal
+      open={open}
+      onClose={() => {
+        if (!isSubmitting) {
+          onClose();
+        }
+      }}
+    >
       <Box
         style={{
           position: "absolute",
@@ -72,11 +99,14 @@ export default function RequestDeletionModal({
             label="Reason"
           />
           <div style={{ display: "flex", justifyContent: "end" }}>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose} disabled={isSubmitting}>
+              Cancel
+            </Button>
             <LoadingButton
               style={{ marginLeft: 5 }}
               variant="contained"
-              disabled={isSubmitDisabled}
+              disabled={isSubmitDisabled || isSubmitting}
+              loading={isSubmitting}
               type="submit"
             >
               Submit

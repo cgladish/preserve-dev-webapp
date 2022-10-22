@@ -385,9 +385,6 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           }}
         >
           <List
-            className={classnames({
-              "nsfw-snippet": hideNsfw,
-            })}
             ref={messagesRef}
             style={{
               overflowY: "scroll",
@@ -441,6 +438,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
+                background: "#222",
               }}
               onClick={() => setHideNsfw(false)}
             >
@@ -448,7 +446,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                 You must be at least 18+ to view this content.
               </Typography>
               <Typography style={{ marginBottom: 20 }}>
-                By clicking you agree that you are at least 18 years old and
+                By continuing you agree that you are at least 18 years old and
                 willing to see adult content.
               </Typography>
               <div style={{ border: "1px solid #eee", padding: "5px 10px" }}>

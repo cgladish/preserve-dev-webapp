@@ -26,6 +26,9 @@ export type Message = {
   authorIdentifier: string | null;
   authorAvatarUrl: string | null;
 };
+export type SnippetInteraction = {
+  views: number;
+};
 export type Snippet = {
   id: string;
   public: boolean;
@@ -35,14 +38,11 @@ export type Snippet = {
   creator: User | null;
   app: App;
   messages: Message[];
+  interaction: SnippetInteraction;
   createdAt: Date;
-};
-export type SnippetInteraction = {
-  views: number;
 };
 export type SnippetPreview = Snippet & {
   id: string;
-  interaction: SnippetInteraction;
   totalComments: number;
 };
 export type SnippetPreviewsPaginationInfo = {

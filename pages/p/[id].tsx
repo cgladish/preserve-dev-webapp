@@ -77,10 +77,6 @@ const LoadingCommentItem = forwardRef<HTMLLIElement>((_, ref) => (
 
 const MAX_COMMENT_LENGTH = 2000;
 export default function Preservette({ snippet }: { snippet: Snippet }) {
-  const [interaction, setInteraction] = useState<SnippetInteraction | null>(
-    null
-  );
-
   const [isSnippetMenuOpen, setIsSnippetMenuOpen] = useState<boolean>(false);
   const snippetMenuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -135,11 +131,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
   useEffect(() => {
     messagesRef.current?.scrollTo(0, messagesRef.current.scrollHeight);
     (async () => {
-      const interactionUrl = `/api/v1/snippets/${snippet.id}/interaction`;
-      const response = await fetch(interactionUrl);
-      const fetchedInteraction = await response.json();
-      setInteraction(fetchedInteraction);
-      await fetch(`${interactionUrl}/views`, { method: "post" }); // Update view count
+      await fetch(`/api/v1/snippets/${snippet.id}/interaction/views`, {
+        method: "post",
+      }); // Update view count
     })();
   }, []);
 
@@ -328,24 +322,18 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                   height: 30,
                 }}
               >
-                {interaction ? (
-                  <>
-                    <Typography fontSize={12}>
-                      {interaction.views} Views
-                    </Typography>
-                    <Typography
-                      fontSize={12}
-                      style={{ marginLeft: 5, marginRight: 5 }}
-                    >
-                      •
-                    </Typography>
-                    <Typography fontSize={12}>
-                      Posted {timeAgo.format(new Date(snippet.createdAt))}
-                    </Typography>
-                  </>
-                ) : (
-                  <Skeleton style={{ width: 150 }} />
-                )}
+                <Typography fontSize={12}>
+                  {snippet.interaction.views} Views
+                </Typography>
+                <Typography
+                  fontSize={12}
+                  style={{ marginLeft: 5, marginRight: 5 }}
+                >
+                  •
+                </Typography>
+                <Typography fontSize={12}>
+                  Posted {timeAgo.format(new Date(snippet.createdAt))}
+                </Typography>
               </div>
             </div>
           </div>
@@ -654,5 +642,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       snippet,
     },
+    revalidate: 300, // 5 minutes
   };
 };

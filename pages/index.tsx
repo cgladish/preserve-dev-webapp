@@ -1,9 +1,15 @@
 import { Apple } from "@mui/icons-material";
 import { Button, Grid, Typography } from "@mui/material";
+import { GetStaticProps } from "next";
 import Layout from "../components/layout";
 import SnippetsPreview from "../components/snippetsPreview";
+import { SnippetPreviewsPaginationInfo } from "../utils/types";
 
-export default function Home() {
+export default function Home({
+  initialSnippets,
+}: {
+  initialSnippets: SnippetPreviewsPaginationInfo;
+}) {
   return (
     <Layout title="Preserve.dev" withHeader>
       <div
@@ -105,8 +111,25 @@ export default function Home() {
             </div>
           </Grid>
         </Grid>
-        <SnippetsPreview title="Recent Snippets" />
+        <SnippetsPreview
+          title="Recent Snippets"
+          initialSnippets={initialSnippets}
+        />
       </div>
     </Layout>
   );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  const response = await fetch(`${process.env.API_URL}/snippets/preview`);
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
+  const initialSnippets: SnippetPreviewsPaginationInfo = await response.json();
+  return {
+    props: {
+      initialSnippets,
+    },
+    revalidate: 300, // 5 minutes
+  };
+};

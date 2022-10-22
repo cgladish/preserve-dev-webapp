@@ -10,15 +10,17 @@ import { Typography } from "@mui/material";
 
 export default function SnippetsPreview({
   title,
+  initialSnippets,
   creatorId,
 }: {
   title: string;
+  initialSnippets?: SnippetPreviewsPaginationInfo;
   creatorId?: string;
 }) {
   const snippetsBottomRef = useRef<HTMLDivElement>(null);
   const [isFetchingSnippets, setIsFetchingSnippets] = useState<boolean>();
   const [snippets, setSnippets] =
-    useState<SnippetPreviewsPaginationInfo | null>(null);
+    useState<SnippetPreviewsPaginationInfo | null>(initialSnippets ?? null);
   const isSnippetsBottomRefInViewport = useIsInViewport(snippetsBottomRef);
   useEffect(() => {
     (async () => {

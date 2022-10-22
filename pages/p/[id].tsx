@@ -84,6 +84,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     useState<boolean>(false);
 
   const [nsfw, setNsfw] = useState(snippet.nsfw);
+  const [hideNsfw, setHideNsfw] = useState<boolean>(
+    snippet.nsfw && snippet.claimed
+  );
   const updateNsfw = useCallback(
     debounce(async (nsfw: boolean) => {
       await fetch(`/api/v1/snippets/${snippet.id}`, {
@@ -358,11 +361,11 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
               <FormControlLabel
                 control={
                   <Checkbox
-                    value={nsfw}
+                    checked={nsfw}
                     onChange={(event) => onChangeNsfw(event.target.checked)}
                   />
                 }
-                label="Includes NSFW content"
+                label="Includes adult content"
               />
             </div>
           )}
@@ -382,6 +385,9 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           }}
         >
           <List
+            className={classnames({
+              "nsfw-snippet": hideNsfw,
+            })}
             ref={messagesRef}
             style={{
               overflowY: "scroll",
@@ -395,14 +401,16 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
               <MessageItem key={message.id} message={message} />
             ))}
           </List>
-          <IconButton
-            className="snippet-menu-button"
-            style={{ position: "absolute", top: 5, right: 15 }}
-            ref={snippetMenuButtonRef}
-            onClick={() => setIsSnippetMenuOpen(true)}
-          >
-            <MoreHoriz />
-          </IconButton>
+          {!hideNsfw && (
+            <IconButton
+              className="snippet-menu-button"
+              style={{ position: "absolute", top: 5, right: 15 }}
+              ref={snippetMenuButtonRef}
+              onClick={() => setIsSnippetMenuOpen(true)}
+            >
+              <MoreHoriz />
+            </IconButton>
+          )}
           <Menu
             anchorEl={snippetMenuButtonRef.current}
             open={isSnippetMenuOpen}
@@ -422,6 +430,32 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
               <Typography>Request Deletion</Typography>
             </MenuItem>
           </Menu>
+          {hideNsfw && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                position: "absolute",
+                height: "100%",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => setHideNsfw(false)}
+            >
+              <Typography fontWeight={700} style={{ marginBottom: 10 }}>
+                You must be at least 18+ to view this content.
+              </Typography>
+              <Typography style={{ marginBottom: 20 }}>
+                By clicking you agree that you are at least 18 years old and
+                willing to see adult content.
+              </Typography>
+              <div style={{ border: "1px solid #eee", padding: "5px 10px" }}>
+                Click to view NSFW
+              </div>
+            </div>
+          )}
         </Card>
         <RequestDeletionModal
           open={isRequestDeletionModalOpen}

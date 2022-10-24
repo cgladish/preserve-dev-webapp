@@ -68,13 +68,3 @@ code {
 .title-input fieldset {
   border: 0;
 }
-
-.snippet-menu-button {
-  visibility: hidden;
-}
-.snippet-content:hover .snippet-menu-button {
-  visibility: visible;
-}
-.snippet-content-menu-open .snippet-menu-button {
-  visibility: visible;
-}

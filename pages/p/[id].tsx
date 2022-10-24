@@ -301,43 +301,89 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             <div
               style={{
                 display: "flex",
-                flexDirection: "column",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              <Typography fontSize={14}>
-                {snippet.creator && (
-                  <>
-                    Uploaded by{" "}
-                    <Link href={`/u/${snippet.creator?.id}/snippets`}>
-                      <a style={{ color: "#fff", textDecoration: "underline" }}>
-                        {snippet.creator?.displayName}
-                      </a>
-                    </Link>
-                  </>
-                )}
-              </Typography>
               <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  color: "#aaa",
-                  width: "100%",
-                  height: 30,
+                  flexDirection: "column",
                 }}
               >
-                <Typography fontSize={12}>
-                  {snippet.interaction.views} Views
+                <Typography fontSize={14}>
+                  {snippet.creator && (
+                    <>
+                      Uploaded by{" "}
+                      <Link href={`/u/${snippet.creator?.id}/snippets`}>
+                        <a
+                          style={{ color: "#fff", textDecoration: "underline" }}
+                        >
+                          {snippet.creator?.displayName}
+                        </a>
+                      </Link>
+                    </>
+                  )}
                 </Typography>
-                <Typography
-                  fontSize={12}
-                  style={{ marginLeft: 5, marginRight: 5 }}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    color: "#aaa",
+                    width: "100%",
+                    height: 30,
+                  }}
                 >
-                  •
-                </Typography>
-                <Typography fontSize={12}>
-                  Posted {timeAgo.format(new Date(snippet.createdAt))}
-                </Typography>
+                  <Typography fontSize={12}>
+                    {snippet.interaction.views} Views
+                  </Typography>
+                  <Typography
+                    fontSize={12}
+                    style={{ marginLeft: 5, marginRight: 5 }}
+                  >
+                    •
+                  </Typography>
+                  <Typography fontSize={12}>
+                    Posted {timeAgo.format(new Date(snippet.createdAt))}
+                  </Typography>
+                  <Typography
+                    fontSize={12}
+                    style={{ marginLeft: 5, marginRight: 5 }}
+                  >
+                    •
+                  </Typography>
+                  <Typography fontSize={12}>
+                    Sourced from {snippet.app.name}
+                  </Typography>
+                </div>
               </div>
+              {!hideNsfw && (
+                <IconButton
+                  ref={snippetMenuButtonRef}
+                  onClick={() => setIsSnippetMenuOpen(true)}
+                >
+                  <MoreHoriz />
+                </IconButton>
+              )}
+              <Menu
+                anchorEl={snippetMenuButtonRef.current}
+                open={isSnippetMenuOpen}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                onClose={() => setIsSnippetMenuOpen(false)}
+              >
+                <MenuItem
+                  onClick={() => {
+                    setIsSnippetMenuOpen(false);
+                    setIsRequestDeletionModalOpen(true);
+                  }}
+                >
+                  <ListItemIcon>
+                    <Flag />
+                  </ListItemIcon>
+                  <Typography>Request Deletion</Typography>
+                </MenuItem>
+              </Menu>
             </div>
           </div>
           {isEditableSnippet && (
@@ -371,9 +417,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
           )}
         </div>
         <Card
-          className={classnames("snippet-content", {
-            "snippet-content-menu-open": isSnippetMenuOpen,
-          })}
+          className={classnames("snippet-content")}
           style={{
             display: "flex",
             flexDirection: "column",
@@ -398,35 +442,6 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
               <MessageItem key={message.id} message={message} />
             ))}
           </List>
-          {!hideNsfw && (
-            <IconButton
-              className="snippet-menu-button"
-              style={{ position: "absolute", top: 5, right: 15 }}
-              ref={snippetMenuButtonRef}
-              onClick={() => setIsSnippetMenuOpen(true)}
-            >
-              <MoreHoriz />
-            </IconButton>
-          )}
-          <Menu
-            anchorEl={snippetMenuButtonRef.current}
-            open={isSnippetMenuOpen}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "right" }}
-            onClose={() => setIsSnippetMenuOpen(false)}
-          >
-            <MenuItem
-              onClick={() => {
-                setIsSnippetMenuOpen(false);
-                setIsRequestDeletionModalOpen(true);
-              }}
-            >
-              <ListItemIcon>
-                <Flag />
-              </ListItemIcon>
-              <Typography>Request Deletion</Typography>
-            </MenuItem>
-          </Menu>
           {hideNsfw && (
             <div
               style={{

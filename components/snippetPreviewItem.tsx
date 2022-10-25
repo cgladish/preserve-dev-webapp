@@ -1,5 +1,6 @@
 import { Comment, MoreHoriz, Visibility } from "@mui/icons-material";
 import { Card, List, ListItem, Skeleton, Typography } from "@mui/material";
+import Link from "next/link";
 import { forwardRef } from "react";
 import { SnippetPreview } from "../utils/types";
 import MessageItem from "./snippetMessageItem";
@@ -111,90 +112,98 @@ export default function SnippetPreviewItem({
   );
   const hiddenMessages = snippet.messages.length - messagesToShow.length;
   return (
-    <a
-      className="snippet-preview-item"
-      href={`/p/${snippet.id}`}
-      style={{ marginBottom: 50 }}
-    >
-      <Card style={{ width: 300, paddingBottom: 10 }}>
-        {hiddenMessages > 0 && (
+    <Link href={`/p/${snippet.id}`}>
+      <a
+        className="snippet-preview-item"
+        style={{ textDecoration: "none", marginBottom: 50 }}
+      >
+        <Card style={{ width: 300, paddingBottom: 10 }}>
+          {hiddenMessages > 0 && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                paddingBottom: 10,
+              }}
+            >
+              <MoreHoriz />
+              <Typography fontSize="0.8rem">
+                {hiddenMessages} more messages
+              </Typography>
+            </div>
+          )}
+          <List
+            className={snippet.nsfw ? "nsfw-snippet" : ""}
+            style={{ paddingBottom: 10, paddingTop: 0 }}
+            dense
+          >
+            {messagesToShow.map((message) => (
+              <MessageItem key={message.id} message={message} isPreview />
+            ))}
+          </List>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
-              paddingBottom: 10,
+              borderTop: "1px solid #A45EE5",
+              paddingTop: 10,
             }}
           >
-            <MoreHoriz />
-            <Typography fontSize="0.8rem">
-              {hiddenMessages} more messages
-            </Typography>
-          </div>
-        )}
-        <List
-          className={snippet.nsfw ? "nsfw-snippet" : ""}
-          style={{ paddingBottom: 10, paddingTop: 0 }}
-          dense
-        >
-          {messagesToShow.map((message) => (
-            <MessageItem key={message.id} message={message} isPreview />
-          ))}
-        </List>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            borderTop: "1px solid #A45EE5",
-            paddingTop: 10,
-          }}
-        >
-          {snippet.title && (
-            <Typography
-              style={{ marginBottom: 10, marginLeft: 10 }}
-              fontSize="0.85rem"
-            >
-              {snippet.title}
-            </Typography>
-          )}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#aaa",
-              paddingLeft: 20,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                width: 70,
-                height: 15,
-              }}
-            >
-              <Visibility style={{ width: 15, height: 15, marginRight: 5 }} />
-              <Typography fontSize="0.8rem">
-                {snippet.interaction.views}
+            {snippet.title && (
+              <Typography
+                style={{ marginBottom: 10, marginLeft: 10 }}
+                fontSize="0.85rem"
+              >
+                {snippet.title}
               </Typography>
-            </div>
+            )}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                width: 70,
-                height: 15,
+                justifyContent: "center",
+                color: "#aaa",
+                paddingLeft: 20,
               }}
             >
-              <Comment
-                style={{ width: 15, height: 15, marginTop: 3, marginRight: 5 }}
-              />
-              <Typography fontSize="0.8rem">{snippet.totalComments}</Typography>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: 70,
+                  height: 15,
+                }}
+              >
+                <Visibility style={{ width: 15, height: 15, marginRight: 5 }} />
+                <Typography fontSize="0.8rem">
+                  {snippet.interaction.views}
+                </Typography>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: 70,
+                  height: 15,
+                }}
+              >
+                <Comment
+                  style={{
+                    width: 15,
+                    height: 15,
+                    marginTop: 3,
+                    marginRight: 5,
+                  }}
+                />
+                <Typography fontSize="0.8rem">
+                  {snippet.totalComments}
+                </Typography>
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
-    </a>
+        </Card>
+      </a>
+    </Link>
   );
 }

@@ -316,11 +316,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                     <>
                       Uploaded by{" "}
                       <Link href={`/u/${snippet.creator?.id}/snippets`}>
-                        <a
-                          style={{ color: "#fff", textDecoration: "underline" }}
-                        >
-                          {snippet.creator?.displayName}
-                        </a>
+                        <a>{snippet.creator?.displayName}</a>
                       </Link>
                     </>
                   )}
@@ -439,7 +435,11 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
             dense
           >
             {snippet.messages.map((message) => (
-              <MessageItem key={message.id} message={message} />
+              <MessageItem
+                key={message.id}
+                appName={snippet.app.name}
+                message={message}
+              />
             ))}
           </List>
           {hideNsfw && (
@@ -606,12 +606,10 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
                               comment.creator.id === user?.id
                                 ? primary.main
                                 : "#eee",
-                            textDecoration: "underline",
+                            fontSize: 12,
                           }}
                         >
-                          <Typography fontSize={12}>
-                            {comment.creator.displayName}
-                          </Typography>
+                          {comment.creator.displayName}
                         </a>
                       </Link>
                       <Typography

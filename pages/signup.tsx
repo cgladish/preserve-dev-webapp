@@ -197,11 +197,7 @@ export default function Signup() {
             label={
               <>
                 I agree to the{" "}
-                <a
-                  href="/terms"
-                  target="_blank"
-                  style={{ color: "#fff", textDecoration: "underline" }}
-                >
+                <a href="/terms" target="_blank">
                   Terms and Conditions
                 </a>
                 .

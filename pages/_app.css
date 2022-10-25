@@ -10,6 +10,12 @@ body {
 a {
   text-decoration: none;
   line-height: 1;
+  color: #eee;
+  font-weight: 600;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 code {
@@ -67,4 +73,12 @@ code {
 
 .title-input fieldset {
   border: 0;
+}
+
+.snippet-external-link {
+  visibility: hidden;
+}
+
+.snippet-message-item:hover .snippet-external-link {
+  visibility: visible;
 }

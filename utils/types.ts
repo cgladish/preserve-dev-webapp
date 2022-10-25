@@ -19,6 +19,7 @@ export type Attachment = {
 };
 export type Message = {
   id: string;
+  externalId: string | null;
   content: string;
   sentAt: string;
   attachments: Attachment[];

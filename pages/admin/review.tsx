@@ -87,14 +87,7 @@ const AdminReview: NextPage = () => {
               {snippets.data.map((snippet) => (
                 <ListItem>
                   <Link href={`/p/${snippet.id}`}>
-                    <a
-                      style={{
-                        color: "#fff",
-                        textDecoration: "none",
-                        width: "100%",
-                      }}
-                      target="_blank"
-                    >
+                    <a style={{ width: "100%" }} target="_blank">
                       <ListItemButton>
                         <ListItemText>
                           {snippet.title || "Untitled snippet"}

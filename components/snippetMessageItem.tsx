@@ -1,10 +1,16 @@
-import { Attachment as AttachmentIcon, Download } from "@mui/icons-material";
+import {
+  Attachment as AttachmentIcon,
+  Download,
+  Link as LinkIcon,
+} from "@mui/icons-material";
 import { Typography, Modal, ListItem, Avatar } from "@mui/material";
 import { format } from "date-fns";
 import filesize from "filesize";
 import { partition } from "lodash";
-import { useState } from "react";
+import Link from "next/link";
+import { memo, useState } from "react";
 import { Attachment, Message } from "../utils/types";
+import ConditionalWrapper from "./conditionalWrapper";
 
 const PREVIEW_SCALE = 0.8;
 
@@ -55,25 +61,25 @@ const Attachments = ({
             }}
           >
             {!isPreview && (
-              <Typography
-                className="message-view-original"
-                color="text.secondary"
-                style={{
-                  fontSize: `${0.75 * scale}rem`,
-                  cursor: "pointer",
-                  width: "fit-content",
-                }}
-                onClick={
-                  isPreview
-                    ? undefined
-                    : (event) => {
-                        event.stopPropagation();
-                        window.open(url, "_blank");
-                      }
-                }
+              <ConditionalWrapper
+                condition={!isPreview}
+                wrapper={({ children }) => (
+                  <Link href={url}>
+                    <a target="_blank">{children}</a>
+                  </Link>
+                )}
               >
-                View Original
-              </Typography>
+                <Typography
+                  className="message-view-original"
+                  color="text.secondary"
+                  style={{
+                    fontSize: `${0.75 * scale}rem`,
+                    width: "fit-content",
+                  }}
+                >
+                  View Original
+                </Typography>
+              </ConditionalWrapper>
             )}
             <img
               src={url}
@@ -121,160 +127,221 @@ const Attachments = ({
           return;
         }
         return (
-          <div
-            key={index}
-            style={{
-              background: "#111",
-              height: 55,
-              display: "flex",
-              alignItems: "center",
-              margin: "5px 0 5px 0",
-              borderRadius: 4,
-              border: "1px solid #666",
-              cursor: "pointer",
-              padding: "0 10px",
-              width: 400,
-              justifyContent: "space-between",
-            }}
-            onClick={
-              isPreview
-                ? undefined
-                : (event) => {
-                    event.stopPropagation();
-                    window.open(url, "_blank");
-                  }
-            }
+          <ConditionalWrapper
+            condition={!isPreview}
+            wrapper={({ children }) => (
+              <Link href={url}>
+                <a target="_blank">{children}</a>
+              </Link>
+            )}
           >
             <div
+              key={index}
               style={{
+                background: "#111",
+                height: 55,
                 display: "flex",
                 alignItems: "center",
+                margin: "5px 0 5px 0",
+                borderRadius: 4,
+                border: "1px solid #666",
+                cursor: "pointer",
+                padding: "0 10px",
+                width: 400,
+                justifyContent: "space-between",
               }}
             >
-              <AttachmentIcon />
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  marginLeft: 5,
+                  alignItems: "center",
+                }}
+              >
+                <AttachmentIcon />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    marginLeft: 5,
+                  }}
+                >
+                  <Typography
+                    style={{
+                      fontSize: `${1.0 * scale}rem`,
+                      width: 250,
+                      justifyContent: "space-between",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {filename}
+                  </Typography>
+                  <Typography
+                    color="text.secondary"
+                    style={{ fontSize: `${0.875 * scale}rem` }}
+                  >
+                    {type}
+                  </Typography>
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
                 }}
               >
                 <Typography
-                  style={{
-                    fontSize: `${1.0 * scale}rem`,
-                    width: 250,
-                    justifyContent: "space-between",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {filename}
-                </Typography>
-                <Typography
                   color="text.secondary"
-                  style={{ fontSize: `${0.875 * scale}rem` }}
+                  style={{ fontSize: ".875rem", whiteSpace: "nowrap" }}
                 >
-                  {type}
+                  {size && filesize(size)}
                 </Typography>
+                <Download />
               </div>
             </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Typography
-                color="text.secondary"
-                style={{ fontSize: ".875rem", whiteSpace: "nowrap" }}
-              >
-                {size && filesize(size)}
-              </Typography>
-              <Download />
-            </div>
-          </div>
+          </ConditionalWrapper>
         );
       })}
     </>
   );
 };
 
-export default function MessageItem({
-  message,
-  isPreview = false,
-}: {
-  message: Message;
-  isPreview?: boolean;
-}) {
-  const scale = isPreview ? PREVIEW_SCALE : 1.0;
-  return (
-    <ListItem
-      style={{
-        paddingTop: 10 * scale,
-        paddingBottom: 10 * scale,
-        paddingRight: 5 * scale,
-        paddingLeft: 5 * scale,
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        borderTop: "1px solid #666",
-      }}
-      disablePadding
-    >
-      <div style={{ display: "flex", width: "100%" }}>
-        <Avatar
-          style={{ width: 40 * scale, height: 40 * scale }}
-          src={message.authorAvatarUrl ?? undefined}
-        />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            marginLeft: 10 * scale,
-            width: "100%",
-            maxWidth: `calc(100% - ${60 * scale}px)`,
-          }}
-        >
+const MessageItem = memo(
+  ({
+    appName,
+    message,
+    isPreview = false,
+  }: {
+    appName?: string;
+    message: Message;
+    isPreview?: boolean;
+  }) => {
+    const scale = isPreview ? PREVIEW_SCALE : 1.0;
+    const authorUrl = (() => {
+      switch (appName) {
+        case "Twitter":
+          return `https://www.twitter.com/${message.authorUsername}`;
+        default:
+          return null;
+      }
+    })();
+    const messageUrl = (() => {
+      switch (appName) {
+        case "Twitter":
+          return (
+            message.externalId && `${authorUrl}/status/${message.externalId}`
+          );
+        default:
+          return null;
+      }
+    })();
+    return (
+      <ListItem
+        className="snippet-message-item"
+        style={{
+          paddingTop: 10 * scale,
+          paddingBottom: 10 * scale,
+          paddingRight: 5 * scale,
+          paddingLeft: 5 * scale,
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          borderTop: "1px solid #666",
+        }}
+        disablePadding
+      >
+        <div style={{ display: "flex", width: "100%" }}>
+          <ConditionalWrapper
+            condition={authorUrl}
+            wrapper={({ children, condition: href }) => (
+              <Link href={href}>
+                <a target="_blank">{children}</a>
+              </Link>
+            )}
+          >
+            <Avatar
+              style={{ width: 40 * scale, height: 40 * scale }}
+              src={message.authorAvatarUrl ?? undefined}
+            />
+          </ConditionalWrapper>
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              flexDirection: "column",
+              marginLeft: 10 * scale,
+              width: "100%",
+              maxWidth: `calc(100% - ${60 * scale}px)`,
             }}
           >
-            <Typography
-              style={{ fontSize: `${1.0 * scale}rem`, fontWeight: "500" }}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
-              {message.authorUsername}
-              {message.authorIdentifier ? ` #${message.authorIdentifier}` : ""}
-            </Typography>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Typography
+                  style={{ fontSize: `${1.0 * scale}rem`, fontWeight: "500" }}
+                >
+                  <ConditionalWrapper
+                    condition={authorUrl}
+                    wrapper={({ children, condition: href }) => (
+                      <Link href={href}>
+                        <a target="_blank">{children}</a>
+                      </Link>
+                    )}
+                  >
+                    <>
+                      {message.authorUsername}
+                      {message.authorIdentifier
+                        ? ` #${message.authorIdentifier}`
+                        : ""}
+                    </>
+                  </ConditionalWrapper>
+                </Typography>
+                {messageUrl && (
+                  <Link href={messageUrl}>
+                    <a
+                      className="snippet-external-link"
+                      target="_blank"
+                      style={{ marginLeft: 5, color: "#aaa" }}
+                    >
+                      <LinkIcon fontSize="small" />
+                    </a>
+                  </Link>
+                )}
+              </div>
+              <Typography
+                color="text.secondary"
+                style={{ fontSize: `${0.75 * scale}rem` }}
+              >
+                {format(new Date(message.sentAt), "P")} at{" "}
+                {format(new Date(message.sentAt), "p")}
+              </Typography>
+            </div>
             <Typography
-              color="text.secondary"
-              style={{ fontSize: `${0.75 * scale}rem` }}
+              className="message-content"
+              style={{
+                fontSize: `${1.0 * scale}rem`,
+                marginTop: `${2 * scale}px`,
+                wordWrap: "break-word",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
             >
-              {format(new Date(message.sentAt), "P")} at{" "}
-              {format(new Date(message.sentAt), "p")}
+              {message.content}
             </Typography>
+            <Attachments
+              attachments={message.attachments}
+              isPreview={isPreview}
+            />
           </div>
-          <Typography
-            className="message-content"
-            style={{
-              fontSize: `${1.0 * scale}rem`,
-              marginTop: `${2 * scale}px`,
-              wordWrap: "break-word",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {message.content}
-          </Typography>
-          <Attachments
-            attachments={message.attachments}
-            isPreview={isPreview}
-          />
         </div>
-      </div>
-    </ListItem>
-  );
-}
+      </ListItem>
+    );
+  }
+);
+
+export default MessageItem;

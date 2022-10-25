@@ -3,6 +3,7 @@ import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useContext, useRef, useState } from "react";
 import { UserContext } from "../components/userProvider";
 import { useUser } from "@auth0/nextjs-auth0";
+import Link from "next/link";
 
 export default function Header() {
   const { user: auth0User } = useUser();
@@ -60,23 +61,31 @@ export default function Header() {
               }}
             >
               {!!auth0User?.["https://auth.preserve.dev/isAdmin"] && (
-                <a href={`/admin/review`} style={{ color: "unset" }}>
-                  <MenuItem>Admin - Review Snippets</MenuItem>
-                </a>
+                <Link href="/admin/review">
+                  <a>
+                    <MenuItem>Admin - Review Snippets</MenuItem>
+                  </a>
+                </Link>
               )}
-              <a href={`/u/${user.id}/snippets`} style={{ color: "unset" }}>
-                <MenuItem>Your Snippets</MenuItem>
-              </a>
-              <a href="/api/auth/logout" style={{ color: "unset" }}>
-                <MenuItem>Sign out</MenuItem>
-              </a>
+              <Link href={`/u/${user.id}/snippets`}>
+                <a>
+                  <MenuItem>Your Snippets</MenuItem>
+                </a>
+              </Link>
+              <Link href="/api/auth/logout">
+                <a>
+                  <MenuItem>Sign out</MenuItem>
+                </a>
+              </Link>
             </Menu>
           </>
         ) : (
           <div>
-            <a href="/api/auth/login">
-              <Button variant="text">Sign in</Button>
-            </a>
+            <Link href="/api/auth/login">
+              <a style={{ textDecoration: "none" }}>
+                <Button variant="text">Sign in</Button>
+              </a>
+            </Link>
           </div>
         ))}
     </div>

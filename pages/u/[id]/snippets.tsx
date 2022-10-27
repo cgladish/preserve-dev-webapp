@@ -8,7 +8,7 @@ import { Typography } from "@mui/material";
 
 const UserSnippets: NextPage = ({ user }: { user: User }) => {
   return (
-    <Layout title={`snippets by ${user.username} - Preserve.dev`} withHeader>
+    <Layout title={`snippets by ${user.username}`} withHeader>
       <div
         style={{
           display: "flex",

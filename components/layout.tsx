@@ -12,14 +12,14 @@ export default function Layout({
   withAds,
 }: {
   children: ReactNode | ReactNode[];
-  title: string;
+  title?: string;
   withAds?: boolean;
   withHeader?: boolean;
 }) {
   return (
     <div style={{ paddingBottom: 30 }}>
       <Head>
-        <title>{title}</title>
+        <title>{title ? `${title} - Preserve.dev` : "Preserve.dev"}</title>
         {withAds && (
           <Script
             async

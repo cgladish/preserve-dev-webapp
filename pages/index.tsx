@@ -1,6 +1,7 @@
 import { Apple } from "@mui/icons-material";
 import { Button, Grid, Typography } from "@mui/material";
 import { GetStaticProps } from "next";
+import Link from "next/link";
 import Layout from "../components/layout";
 import SnippetsPreview from "../components/snippetsPreview";
 import { SnippetPreviewsPaginationInfo } from "../utils/types";
@@ -11,7 +12,7 @@ export default function Home({
   initialSnippets: SnippetPreviewsPaginationInfo;
 }) {
   return (
-    <Layout title="Preserve.dev" withHeader>
+    <Layout withHeader>
       <div
         style={{
           display: "flex",
@@ -66,9 +67,13 @@ export default function Home({
               alignItems: "center",
             }}
           >
-            <Button variant="contained" size="large" style={{ width: 300 }}>
-              Get the Desktop Client
-            </Button>
+            <Link href="/download#desktop">
+              <a style={{ textDecoration: "none" }}>
+                <Button variant="contained" size="large" style={{ width: 300 }}>
+                  Get the Desktop Client
+                </Button>
+              </a>
+            </Link>
             <div style={{ display: "flex", marginTop: 10 }}>
               <Typography variant="h6" style={{ marginRight: 10 }}>
                 Available for
@@ -96,9 +101,13 @@ export default function Home({
               alignItems: "center",
             }}
           >
-            <Button variant="contained" size="large" style={{ width: 300 }}>
-              Get the Browser Extension
-            </Button>
+            <Link href="/download#extension">
+              <a style={{ textDecoration: "none" }}>
+                <Button variant="contained" size="large" style={{ width: 300 }}>
+                  Get the Browser Extension
+                </Button>
+              </a>
+            </Link>
             <div style={{ display: "flex", marginTop: 10 }}>
               <Typography variant="h6" style={{ marginRight: 10 }}>
                 Available for

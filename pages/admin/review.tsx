@@ -69,7 +69,7 @@ const AdminReview: NextPage = () => {
   };
 
   return (
-    <Layout title={`Review Snippets - Preserve.dev`} withHeader>
+    <Layout title="Review Snippets" withHeader>
       <div
         style={{
           paddingLeft: 20,

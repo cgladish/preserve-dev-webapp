@@ -27,67 +27,79 @@ export default function Header() {
         borderBottom: "1px solid #333",
       }}
     >
-      <a href="/">
-        <img id="logo" src="/logo-darkmode.png" height={45} alt="App Logo" />
-        <img id="logo-small" src="/favicon.ico" height={45} alt="App Logo" />
-      </a>
-      {!isLoading &&
-        (user ? (
-          <>
-            <div
-              ref={menuAnchorRef}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginRight: 20,
-                cursor: "pointer",
-              }}
-              onClick={() => setIsMenuOpen(true)}
-            >
-              <Typography>{user.displayName}</Typography>
-              {isMenuOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-            </div>
-            <Menu
-              anchorEl={menuAnchorRef.current}
-              open={isMenuOpen}
-              onClose={() => setIsMenuOpen(false)}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-            >
-              {!!auth0User?.["https://auth.preserve.dev/isAdmin"] && (
-                <Link href="/admin/review">
+      <Link href="/">
+        <a>
+          <img id="logo" src="/logo-darkmode.png" height={45} alt="App Logo" />
+          <img id="logo-small" src="/favicon.ico" height={45} alt="App Logo" />
+        </a>
+      </Link>
+      <div
+        style={{ display: "flex", alignItems: "center", justifyContent: "end" }}
+      >
+        <Link href="/contact">
+          <a style={{ fontWeight: 500, marginRight: 20 }}>Contact Us</a>
+        </Link>
+        <Link href="/download">
+          <a style={{ marginRight: 30, fontWeight: 500 }}>Download</a>
+        </Link>
+        {!isLoading &&
+          (user ? (
+            <>
+              <div
+                ref={menuAnchorRef}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginRight: 20,
+                  cursor: "pointer",
+                }}
+                onClick={() => setIsMenuOpen(true)}
+              >
+                <Typography fontWeight={700}>{user.displayName}</Typography>
+                {isMenuOpen ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+              </div>
+              <Menu
+                anchorEl={menuAnchorRef.current}
+                open={isMenuOpen}
+                onClose={() => setIsMenuOpen(false)}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "right",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                {!!auth0User?.["https://auth.preserve.dev/isAdmin"] && (
+                  <Link href="/admin/review">
+                    <a>
+                      <MenuItem>Admin - Review Snippets</MenuItem>
+                    </a>
+                  </Link>
+                )}
+                <Link href={`/u/${user.id}/snippets`}>
                   <a>
-                    <MenuItem>Admin - Review Snippets</MenuItem>
+                    <MenuItem>Your Snippets</MenuItem>
                   </a>
                 </Link>
-              )}
-              <Link href={`/u/${user.id}/snippets`}>
-                <a>
-                  <MenuItem>Your Snippets</MenuItem>
+                <Link href="/api/auth/logout">
+                  <a>
+                    <MenuItem>Sign out</MenuItem>
+                  </a>
+                </Link>
+              </Menu>
+            </>
+          ) : (
+            <>
+              <Link href="/api/auth/login">
+                <a style={{ textDecoration: "none" }}>
+                  <Button variant="contained">Sign in</Button>
                 </a>
               </Link>
-              <Link href="/api/auth/logout">
-                <a>
-                  <MenuItem>Sign out</MenuItem>
-                </a>
-              </Link>
-            </Menu>
-          </>
-        ) : (
-          <div>
-            <Link href="/api/auth/login">
-              <a style={{ textDecoration: "none" }}>
-                <Button variant="text">Sign in</Button>
-              </a>
-            </Link>
-          </div>
-        ))}
+            </>
+          ))}
+      </div>
     </div>
   );
 }

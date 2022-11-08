@@ -25,11 +25,7 @@ export default async function handler(
       params: omit(req.query, "slug"),
       data: req.body ? JSON.parse(req.body) : undefined,
     });
-    if (
-      req.method === "POST" &&
-      a.status === 200 &&
-      req.query.slug?.[0] === "snippets"
-    ) {
+    if (req.method === "POST" && req.query.slug?.[0] === "snippets") {
       const snippetId = req.query.slug?.[1];
       const subRoute = req.query.slug?.[2];
       if (snippetId && (!subRoute || subRoute === "claim")) {

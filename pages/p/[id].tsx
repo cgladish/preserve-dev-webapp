@@ -235,6 +235,7 @@ export default function Preservette({ snippet }: { snippet: Snippet }) {
     } catch (err) {
       console.error(err);
     }
+    setIsSavingPublic(false);
   };
 
   const isEditableSnippet =

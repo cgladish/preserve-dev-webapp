@@ -50,11 +50,11 @@ const Download: NextPage = () => {
             </Link>
             <Typography style={{ marginTop: 20 }}>
               Download for a specific platform:{" "}
-              <Link href="https://download.preserve.dev/download/win32">
+              <Link href="https://download.preserve.dev/download/exe">
                 <a target="_blank">Windows</a>
               </Link>
               ,{" "}
-              <Link href="https://download.preserve.dev/download/macos">
+              <Link href="https://download.preserve.dev/download/dmg">
                 <a target="_blank">MacOS</a>
               </Link>
             </Typography>

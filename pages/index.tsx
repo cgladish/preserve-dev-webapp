@@ -83,12 +83,14 @@ export default function Home({
                 style={{ width: 30, height: 30, marginRight: 5 }}
                 alt="windows"
               />
-              <Apple style={{ width: 30, height: 30, marginRight: 5 }} />{" "}
+              <Apple style={{ width: 30, height: 30, marginRight: 5 }} />
+              {/*
               <img
                 src="/app-logos/linux.svg"
                 style={{ width: 30, height: 30 }}
                 alt="linux"
               />
+              */}
             </div>
           </Grid>
           <Grid
